@@ -1,0 +1,268 @@
+<?php
+/**
+ * auth_process.php – Authentication Processing (No HTML Output)
+ * 
+ * Handles two POST actions:
+ *   • register – validates input, hashes password, inserts user
+ *   • login    – verifies credentials, sets session, redirects by role
+ * 
+ * All database operations use PDO prepared statements.
+ * Passwords are hashed with PASSWORD_BCRYPT.
+ */
+
+session_start();
+
+require_once '../config/db_connect.php';
+require_once '../includes/helpers.php';
+
+// ── Only accept POST requests ──
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: login.php');
+    exit();
+}
+
+// ── Determine the requested action ──
+$action = $_POST['action'] ?? '';
+
+// ============================================================
+//  HELPER: Set a flash message and redirect
+// ============================================================
+function flashRedirect(string $message, string $type, string $url): void
+{
+    $_SESSION['flash_message'] = $message;
+    $_SESSION['flash_type']    = $type;   // 'success', 'danger', 'warning', 'info'
+    header("Location: $url");
+    exit();
+}
+
+// ============================================================
+//  HELPER: Validate the CSRF token
+// ============================================================
+function validateAuthCsrfToken(): void
+{
+    $token = $_POST['csrf_token'] ?? '';
+    if (empty($token) || !hash_equals($_SESSION['csrf_token'] ?? '', $token)) {
+        flashRedirect('Invalid security token. Please try again.', 'danger', 'login.php');
+    }
+}
+
+// ============================================================
+//  ACTION: REGISTER
+// ============================================================
+if ($action === 'register') {
+
+    // 1. Validate CSRF token
+    validateAuthCsrfToken();
+
+    // 2. Sanitize all inputs
+    $name             = sanitizeInput($_POST['name'] ?? '');
+    $email            = sanitizeInput($_POST['email'] ?? '');
+    $mobile           = sanitizeInput($_POST['mobile'] ?? '');
+    $password         = $_POST['password'] ?? '';          // Don't trim passwords
+    $confirm_password = $_POST['confirm_password'] ?? '';
+    $role             = sanitizeInput($_POST['role'] ?? '');
+
+    // Preserve form data for repopulation on error
+    $_SESSION['form_data'] = [
+        'name'   => $name,
+        'email'  => $email,
+        'mobile' => $mobile,
+        'role'   => $role,
+    ];
+
+    // 3. Validate required fields
+    if (empty($name) || empty($email) || empty($mobile) || empty($password) || empty($confirm_password) || empty($role)) {
+        flashRedirect('All fields are required.', 'danger', 'register.php');
+    }
+
+    // 4. Validate email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        flashRedirect('Please enter a valid email address.', 'danger', 'register.php');
+    }
+
+    // 5. Validate mobile pattern (10–15 digits)
+    if (!preg_match('/^[0-9]{10,15}$/', $mobile)) {
+        flashRedirect('Please enter a valid mobile number (10–15 digits).', 'danger', 'register.php');
+    }
+
+    // 6. Validate password strength (Google-style rules)
+
+    // 6a. No leading or trailing spaces
+    if ($password !== trim($password)) {
+        flashRedirect('Password cannot start or end with a blank space.', 'danger', 'register.php');
+    }
+
+    // 6b. Minimum length: 12 characters
+    if (strlen($password) < 12) {
+        flashRedirect('Password must be at least 12 characters long.', 'danger', 'register.php');
+    }
+
+    // 6c. Require uppercase letter
+    if (!preg_match('/[A-Z]/', $password)) {
+        flashRedirect('Password must contain at least one uppercase letter.', 'danger', 'register.php');
+    }
+
+    // 6d. Require lowercase letter
+    if (!preg_match('/[a-z]/', $password)) {
+        flashRedirect('Password must contain at least one lowercase letter.', 'danger', 'register.php');
+    }
+
+    // 6e. Require digit
+    if (!preg_match('/[0-9]/', $password)) {
+        flashRedirect('Password must contain at least one number.', 'danger', 'register.php');
+    }
+
+    // 6f. Require special character
+    if (!preg_match('/[^A-Za-z0-9]/', $password)) {
+        flashRedirect('Password must contain at least one special character.', 'danger', 'register.php');
+    }
+
+    // 6g. Block commonly-breached / easily-guessable passwords
+    $commonPasswords = [
+        'password', 'password1', 'password123', 'password1234', '123456789012',
+        'qwerty123456', 'letmein1234', 'welcome12345', 'admin12345', 'master12345',
+        'iloveyou1234', 'trustno1234', 'sunshine1234', 'princess1234', 'football1234',
+        'charlie12345', 'shadow123456', 'michael12345', 'donald123456', 'batman123456',
+        'access123456', 'dragon123456', 'monkey123456', 'mustang12345', 'qwerty1234567',
+        'abcdef123456', 'abc123456789', 'passw0rd1234', 'p@ssword1234', 'p@ssw0rd1234',
+        '123456abcdef', 'qwertyuiop12', 'asdfghjkl123', 'zxcvbnm12345', '1234567890ab',
+        'changeme1234', 'letmein12345', 'welcome1234!', 'password!234', 'test12345678',
+    ];
+    if (in_array(strtolower($password), $commonPasswords, true)) {
+        flashRedirect('This password is too common and easily guessable. Please choose a stronger one.', 'danger', 'register.php');
+    }
+
+    // 6h. Block keyboard sequential patterns (qwerty, asdf, zxcvb, etc.)
+    $keyboardPatterns = [
+        'qwerty', 'qwertyui', 'qwertyuiop', 'asdfgh', 'asdfghjk', 'asdfghjkl',
+        'zxcvbn', 'zxcvbnm', '1234567', '12345678', '123456789', '1234567890',
+        '0987654', '09876543', '098765432', '0987654321',
+        'abcdefg', 'abcdefgh', 'abcdefghi', 'abcdefghij',
+    ];
+    $passwordLower = strtolower($password);
+    foreach ($keyboardPatterns as $pattern) {
+        if (strpos($passwordLower, $pattern) !== false || strpos($passwordLower, strrev($pattern)) !== false) {
+            flashRedirect('Password contains a keyboard or sequential pattern. Please avoid predictable sequences.', 'danger', 'register.php');
+        }
+    }
+
+    // 6i. Block password containing user's name or email local part
+    $nameLower = strtolower($name);
+    $emailLocal = strtolower(explode('@', $email)[0]);
+    if (strlen($nameLower) >= 3 && strpos($passwordLower, $nameLower) !== false) {
+        flashRedirect('Password should not contain your name.', 'danger', 'register.php');
+    }
+    if (strlen($emailLocal) >= 3 && strpos($passwordLower, $emailLocal) !== false) {
+        flashRedirect('Password should not contain your email address.', 'danger', 'register.php');
+    }
+
+    // 7. Passwords must match
+    if ($password !== $confirm_password) {
+        flashRedirect('Passwords do not match.', 'danger', 'register.php');
+    }
+
+    // 8. Only allow Participant or Organizer (block Admin self-registration)
+    $allowedRoles = ['Participant', 'Organizer'];
+    if (!in_array($role, $allowedRoles, true)) {
+        flashRedirect('Invalid role selected.', 'danger', 'register.php');
+    }
+
+    // 9. Check if email already exists
+    try {
+        $stmt = $pdo->prepare('SELECT User_ID FROM users WHERE Email = :email LIMIT 1');
+        $stmt->execute([':email' => $email]);
+
+        if ($stmt->fetch()) {
+            flashRedirect('An account with this email already exists.', 'warning', 'register.php');
+        }
+    } catch (PDOException $e) {
+        error_log('Registration email-check error: ' . $e->getMessage());
+        flashRedirect('Something went wrong. Please try again later.', 'danger', 'register.php');
+    }
+
+    // 10. Hash the password
+    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+    // 11. Insert the new user
+    try {
+        $stmt = $pdo->prepare(
+            'INSERT INTO users (Name, Email, Mobile, Password, Role, created_at)
+             VALUES (:name, :email, :mobile, :password, :role, NOW())'
+        );
+        $stmt->execute([
+            ':name'     => $name,
+            ':email'    => $email,
+            ':mobile'   => $mobile,
+            ':password' => $hashedPassword,
+            ':role'     => $role,
+        ]);
+
+        // Clear preserved form data on success
+        unset($_SESSION['form_data']);
+
+        flashRedirect('Registration successful! You can now log in.', 'success', 'login.php');
+
+    } catch (PDOException $e) {
+        error_log('Registration insert error: ' . $e->getMessage());
+        flashRedirect('Registration failed. Please try again later.', 'danger', 'register.php');
+    }
+}
+
+// ============================================================
+//  ACTION: LOGIN
+// ============================================================
+elseif ($action === 'login') {
+
+    // 1. Validate CSRF token
+    validateAuthCsrfToken();
+
+    // 2. Sanitize inputs
+    $email    = sanitizeInput($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';   // Don't trim passwords
+
+    // 3. Basic validation
+    if (empty($email) || empty($password)) {
+        flashRedirect('Email and password are required.', 'danger', 'login.php');
+    }
+
+    // 4. Look up the user by email
+    try {
+        $stmt = $pdo->prepare(
+            'SELECT User_ID, Name, Email, Password, Role FROM users WHERE Email = :email LIMIT 1'
+        );
+        $stmt->execute([':email' => $email]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+     } catch (PDOException $e) {
+        error_log('Login query error: ' . $e->getMessage());
+        flashRedirect('Something went wrong. Please try again later.', 'danger', 'login.php');
+     }
+
+    // 5. Verify password
+    if (!$user || !password_verify($password, $user['Password'])) {
+        flashRedirect('Invalid email or password.', 'danger', 'login.php');
+    }
+
+    // 6. Generate OTP and store temporary credentials
+    $otp = rand(100000, 999999);
+    $_SESSION['temp_user'] = [
+        'User_ID' => $user['User_ID'],
+        'Name'    => $user['Name'],
+        'Email'   => $user['Email'],
+        'Role'    => $user['Role']
+    ];
+    $_SESSION['login_otp']        = $otp;
+    $_SESSION['login_otp_expiry'] = time() + 300; // 5 minutes validity
+    $_SESSION['otp_attempts']     = 0;
+
+    // Redirect to OTP verification page
+    header('Location: otp_verify.php');
+    exit();
+}
+
+// ============================================================
+//  UNKNOWN ACTION – Redirect to login
+// ============================================================
+else {
+    header('Location: login.php');
+    exit();
+}
