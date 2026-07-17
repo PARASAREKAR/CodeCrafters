@@ -35,10 +35,12 @@ CREATE TABLE events (
     Event_Time TIME,
     Organizer VARCHAR(100),
     Capacity INT NOT NULL DEFAULT 100,
+    Event_Category VARCHAR(50) NOT NULL DEFAULT 'General',
     created_by INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_event_date (Event_Date),
     INDEX idx_event_name (Event_Name),
+    INDEX idx_event_category (Event_Category),
     FOREIGN KEY (created_by) REFERENCES users(User_ID) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

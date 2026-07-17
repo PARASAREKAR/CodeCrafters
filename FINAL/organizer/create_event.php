@@ -16,6 +16,19 @@ requireRole(['Organizer']);
 require_once '../config/db_connect.php';
 require_once '../includes/helpers.php';
 
+// ── Category options ───────────────────────────────────────────
+$event_categories = [
+    'General',
+    'Technology',
+    'Business',
+    'Education',
+    'Health & Wellness',
+    'Arts & Culture',
+    'Sports',
+    'Networking',
+    'Workshop'
+];
+
 // ── Current organizer info ─────────────────────────────────────
 $user_id   = $_SESSION['user_id'];
 $user_name = $_SESSION['user_name'] ?? '';
@@ -38,6 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $eventTime   = trim($_POST['Event_Time'] ?? '');
     $organizer   = trim(htmlspecialchars($_POST['Organizer']    ?? '', ENT_QUOTES, 'UTF-8'));
     $capacity    = (int) ($_POST['Capacity'] ?? 0);
+    $category    = trim(htmlspecialchars($_POST['Event_Category'] ?? 'General', ENT_QUOTES, 'UTF-8'));
+
+    // Validate category is in allowed list
+    if (!in_array($category, $event_categories, true)) {
+        $category = 'General';
+    }
 
     // ── Validation ─────────────────────────────────────────────
     $errors = [];
@@ -57,10 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── INSERT event ───────────────────────────────────────────
     $stmt = $pdo->prepare(
-        "INSERT INTO events (Event_Name, Description, Venue, Event_Date, Event_Time, Organizer, Capacity, created_by)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
+        "INSERT INTO events (Event_Name, Description, Venue, Event_Date, Event_Time, Organizer, Capacity, Event_Category, created_by)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
-    $stmt->execute([$eventName, $description, $venue, $eventDate, $eventTime, $organizer, $capacity, $user_id]);
+    $stmt->execute([$eventName, $description, $venue, $eventDate, $eventTime, $organizer, $capacity, $category, $user_id]);
 
     setFlashMessage('Event created successfully!', 'success');
     header('Location: organizer_dashboard.php');
@@ -113,6 +132,21 @@ require_once '../includes/header.php';
                             <textarea class="form-control form-control-custom" id="Description"
                                       name="Description" rows="4"
                                       placeholder="Describe your event"><?php echo htmlspecialchars($_POST['Description'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
+                        </div>
+
+                        <!-- Event Category -->
+                        <div class="mb-3">
+                            <label for="Event_Category" class="form-label fw-semibold">
+                                <i class="bi bi-tag me-1"></i>Event Category <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select form-control-custom" id="Event_Category" name="Event_Category" required>
+                                <?php foreach ($event_categories as $cat): ?>
+                                    <option value="<?php echo htmlspecialchars($cat, ENT_QUOTES, 'UTF-8'); ?>"
+                                        <?php echo (isset($_POST['Event_Category']) && $_POST['Event_Category'] === $cat) ? 'selected' : ''; ?>>
+                                        <?php echo htmlspecialchars($cat, ENT_QUOTES, 'UTF-8'); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
 
                         <!-- Venue -->
