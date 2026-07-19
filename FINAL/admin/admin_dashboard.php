@@ -64,65 +64,43 @@ require_once '../includes/header.php';
 
 <div class="row g-4 mb-4">
     <!-- Total Users -->
-    <div class="col-md-3 col-sm-6">
-        <div class="stat-card glass-card text-center p-4">
-            <div class="display-4 mb-2" style="color: var(--accent);">👥</div>
-            <h3 class="fw-bold"><?php echo (int) $totalUsers; ?></h3>
-            <p class="mb-0 text-muted">Total Users</p>
+    <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="0">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-value"><?php echo (int) $totalUsers; ?></div>
+            <div class="stat-label">Total Users</div>
         </div>
     </div>
 
     <!-- Total Events -->
-    <div class="col-md-3 col-sm-6">
-        <div class="stat-card glass-card text-center p-4">
-            <div class="display-4 mb-2" style="color: var(--accent);">📅</div>
-            <h3 class="fw-bold"><?php echo (int) $totalEvents; ?></h3>
-            <p class="mb-0 text-muted">Total Events</p>
+    <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="100">
+        <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-value"><?php echo (int) $totalEvents; ?></div>
+            <div class="stat-label">Total Events</div>
         </div>
     </div>
 
     <!-- Total Registrations -->
-    <div class="col-md-3 col-sm-6">
-        <div class="stat-card glass-card text-center p-4">
-            <div class="display-4 mb-2" style="color: var(--accent);">📝</div>
-            <h3 class="fw-bold"><?php echo (int) $totalRegistrations; ?></h3>
-            <p class="mb-0 text-muted">Total Registrations</p>
+    <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="200">
+        <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-value"><?php echo (int) $totalRegistrations; ?></div>
+            <div class="stat-label">Total Registrations</div>
         </div>
     </div>
 
     <!-- Active Registrations -->
-    <div class="col-md-3 col-sm-6">
-        <div class="stat-card glass-card text-center p-4">
-            <div class="display-4 mb-2" style="color: var(--accent);">✅</div>
-            <h3 class="fw-bold"><?php echo (int) $activeRegistrations; ?></h3>
-            <p class="mb-0 text-muted">Active Registrations</p>
+    <div class="col-md-3 col-sm-6" data-aos="fade-up" data-aos-delay="300">
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value"><?php echo (int) $activeRegistrations; ?></div>
+            <div class="stat-label">Active Registrations</div>
         </div>
     </div>
 </div>
 
-<!-- ============================================================
-     QUICK LINKS
-     ============================================================ -->
-<div class="row g-4 mb-4">
-    <div class="col-md-6">
-        <a href="manage_users.php" class="text-decoration-none">
-            <div class="card glass-card h-100 p-4 text-center" style="border-left: 4px solid var(--accent);">
-                <div class="display-5 mb-2">👤</div>
-                <h5 class="fw-bold">Manage Users</h5>
-                <p class="text-muted mb-0">View, search, and manage all system users</p>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6">
-        <a href="reports.php" class="text-decoration-none">
-            <div class="card glass-card h-100 p-4 text-center" style="border-left: 4px solid var(--accent);">
-                <div class="display-5 mb-2">📊</div>
-                <h5 class="fw-bold">View Reports</h5>
-                <p class="text-muted mb-0">Event-wise, participant, attendance & cancellation reports</p>
-            </div>
-        </a>
-    </div>
-</div>
+
 
 <!-- ============================================================
      RECENT REGISTRATIONS TABLE

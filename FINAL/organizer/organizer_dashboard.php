@@ -72,31 +72,31 @@ require_once '../includes/header.php';
 
     <?php echo getFlashMessage(); ?>
 
-    <div class="row g-4 mb-4">
+    <div class="row g-4 mb-5">
         <!-- My Events -->
-        <div class="col-md-4">
-            <div class="stat-card glass-card text-center p-4">
-                <i class="bi bi-calendar-event display-4 text-accent mb-2"></i>
-                <h3 class="fw-bold"><?php echo (int) $totalEvents; ?></h3>
-                <p class="mb-0 text-muted">My Events</p>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value"><?php echo (int) $totalEvents; ?></div>
+                <div class="stat-label">My Events</div>
             </div>
         </div>
 
         <!-- Total Registrations -->
-        <div class="col-md-4">
-            <div class="stat-card glass-card text-center p-4">
-                <i class="bi bi-people-fill display-4 text-accent mb-2"></i>
-                <h3 class="fw-bold"><?php echo (int) $totalRegistrations; ?></h3>
-                <p class="mb-0 text-muted">Total Registrations</p>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value"><?php echo (int) $totalRegistrations; ?></div>
+                <div class="stat-label">Total Registrations</div>
             </div>
         </div>
 
         <!-- Upcoming Events -->
-        <div class="col-md-4">
-            <div class="stat-card glass-card text-center p-4">
-                <i class="bi bi-clock-history display-4 text-accent mb-2"></i>
-                <h3 class="fw-bold"><?php echo (int) $upcomingEvents; ?></h3>
-                <p class="mb-0 text-muted">Upcoming Events</p>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="stat-card">
+                <div class="stat-icon">⏰</div>
+                <div class="stat-value"><?php echo (int) $upcomingEvents; ?></div>
+                <div class="stat-label">Upcoming Events</div>
             </div>
         </div>
     </div>

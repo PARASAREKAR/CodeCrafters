@@ -6,7 +6,7 @@
    ============================================================ */
 
 /* ---- Import Google Font ---- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 /* ==========================================================
    1. GLOBAL RESET & BASE
@@ -25,10 +25,10 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.7;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -86,14 +86,18 @@ a:hover {
    ========================================================== */
 
 .navbar-custom {
-  background: var(--navbar-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  padding: 0.75rem 0;
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  padding: 0.85rem 1.5rem;
   position: sticky;
-  top: 0;
+  top: 15px;
   z-index: 1040;
+  border-radius: 50px;
+  margin: 0 auto;
+  max-width: 95%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 .navbar-custom .navbar-brand {
@@ -146,13 +150,19 @@ a:hover {
   border: 1px solid var(--border);
   border-radius: 16px;
   box-shadow: var(--shadow);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
 }
 .card-custom:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-hover);
-  background: var(--bg-card-hover);
+}
+
+.glass-card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
 }
 
 .card-custom .card-header {
@@ -171,76 +181,69 @@ a:hover {
   padding: 1rem 1.5rem;
 }
 
-/* Glass-morphism Card */
-.glass-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-}
-
 /* ==========================================================
    5. STAT CARDS (Dashboard)
    ========================================================== */
 
 .stat-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--accent);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: var(--shadow);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 2rem 1.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .stat-card::before {
   content: '';
   position: absolute;
   top: 0;
+  left: 0;
   right: 0;
-  width: 100px;
-  height: 100px;
+  height: 4px;
   background: var(--accent-gradient);
-  opacity: 0.06;
-  border-radius: 50%;
-  transform: translate(30px, -30px);
 }
 .stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 229, 255, 0.15);
 }
 
 .stat-card .stat-icon {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
   background: var(--accent-light);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   color: var(--accent);
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 0 20px var(--accent-light);
 }
 
 .stat-card .stat-value {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 800;
   color: var(--text-primary);
-  line-height: 1.2;
-  letter-spacing: -0.03em;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
 }
 
 .stat-card .stat-label {
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: var(--text-muted);
-  font-weight: 500;
-  margin-top: 0.25rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 /* Stat card accent color variants */
@@ -260,44 +263,31 @@ a:hover {
    6. BUTTONS
    ========================================================== */
 
+.btn {
+  font-weight: 600;
+  border-radius: 50px; /* Fully rounded buttons */
+  padding: 0.65rem 1.5rem;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: 0.02em;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
 .btn-accent {
   background: var(--accent-gradient);
+  color: #fff;
   border: none;
-  color: #ffffff;
-  font-weight: 600;
-  padding: 0.6rem 1.5rem;
-  border-radius: 10px;
-  font-size: 0.92rem;
-  letter-spacing: 0.01em;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
-  position: relative;
-  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 229, 255, 0.2);
 }
-.btn-accent::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-  transition: left 0.5s ease;
-}
-.btn-accent:hover {
-  transform: scale(1.02);
-  box-shadow: 0 4px 15px rgba(67, 97, 238, 0.35);
-  color: #ffffff;
-}
-.btn-accent:hover::before {
-  left: 100%;
-}
-.btn-accent:active {
-  transform: scale(0.98);
-}
-.btn-accent:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
+.btn-accent:hover,
+.btn-accent:focus {
+  background: var(--accent-gradient);
+  color: #fff;
+  opacity: 0.95;
+  box-shadow: 0 6px 20px rgba(0, 229, 255, 0.35);
+  transform: translateY(-2px);
 }
 
 .btn-outline-accent {

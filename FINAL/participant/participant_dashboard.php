@@ -109,31 +109,30 @@ require_once '../includes/header.php';
 
     <!-- ── Stat Cards ─────────────────────────────────────── -->
     <div class="row g-4 mb-5">
-
         <!-- My Registrations -->
-        <div class="col-md-4">
-            <div class="stat-card card-custom glass-card text-center p-4">
-                <div class="mb-2"><i class="bi bi-journal-check fs-1 text-primary"></i></div>
-                <h3 class="fw-bold"><?php echo (int) $my_registrations; ?></h3>
-                <p class="text-muted mb-0">My Registrations</p>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+            <div class="stat-card">
+                <div class="stat-icon">📝</div>
+                <div class="stat-value"><?php echo (int) $my_registrations; ?></div>
+                <div class="stat-label">My Registrations</div>
             </div>
         </div>
 
         <!-- Upcoming Events -->
-        <div class="col-md-4">
-            <div class="stat-card card-custom glass-card text-center p-4">
-                <div class="mb-2"><i class="bi bi-calendar-event fs-1 text-success"></i></div>
-                <h3 class="fw-bold"><?php echo (int) $upcoming_events; ?></h3>
-                <p class="text-muted mb-0">Upcoming Events</p>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="stat-card">
+                <div class="stat-icon">⏰</div>
+                <div class="stat-value"><?php echo (int) $upcoming_events; ?></div>
+                <div class="stat-label">Upcoming Events</div>
             </div>
         </div>
 
         <!-- Available Events -->
-        <div class="col-md-4">
-            <div class="stat-card card-custom glass-card text-center p-4">
-                <div class="mb-2"><i class="bi bi-door-open fs-1 text-info"></i></div>
-                <h3 class="fw-bold"><?php echo (int) $available_events; ?></h3>
-                <p class="text-muted mb-0">Available Events</p>
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="stat-card">
+                <div class="stat-icon">🎟️</div>
+                <div class="stat-value"><?php echo (int) $available_events; ?></div>
+                <div class="stat-label">Available Events</div>
             </div>
         </div>
     </div>
