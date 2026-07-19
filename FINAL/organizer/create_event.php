@@ -76,12 +76,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── INSERT event ───────────────────────────────────────────
     $stmt = $pdo->prepare(
-        "INSERT INTO events (Event_Name, Description, Venue, Event_Date, Event_Time, Organizer, Capacity, Event_Category, created_by)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        "INSERT INTO events (Event_Name, Description, Venue, Event_Date, Event_Time, Organizer, Capacity, Event_Category, created_by, Status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')"
     );
     $stmt->execute([$eventName, $description, $venue, $eventDate, $eventTime, $organizer, $capacity, $category, $user_id]);
 
-    setFlashMessage('Event created successfully!', 'success');
+    setFlashMessage('Event created successfully! It is now pending admin approval.', 'success');
     header('Location: organizer_dashboard.php');
     exit;
 }

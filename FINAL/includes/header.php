@@ -82,6 +82,9 @@ require_once __DIR__ . '/helpers.php';
                                 <a class="nav-link" href="../admin/manage_users.php">Manage Users</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="../admin/manage_requests.php">Requests</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="../admin/reports.php">Reports</a>
                             </li>
 

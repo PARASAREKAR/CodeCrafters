@@ -44,13 +44,23 @@ if (isset($_GET['delete_id'])) {
     redirectTo('manage_users.php');
 }
 
-// ── Fetch all users ordered by creation date ───────────────────
-$stmtUsers = $pdo->query(
+// ── Fetch Participants ───────────────────────────────────────────
+$stmtParticipants = $pdo->query(
     "SELECT User_ID, Name, Email, Mobile, Role, created_at
      FROM users
+     WHERE Role = 'Participant'
      ORDER BY created_at DESC"
 );
-$users = $stmtUsers->fetchAll(PDO::FETCH_ASSOC);
+$participants = $stmtParticipants->fetchAll(PDO::FETCH_ASSOC);
+
+// ── Fetch Organizers ────────────────────────────────────────────
+$stmtOrganizers = $pdo->query(
+    "SELECT User_ID, Name, Email, Mobile, Role, Account_Status, created_at
+     FROM users
+     WHERE Role = 'Organizer'
+     ORDER BY created_at DESC"
+);
+$organizers = $stmtOrganizers->fetchAll(PDO::FETCH_ASSOC);
 
 // ── Page title for header include ──────────────────────────────
 $pageTitle = "Manage Users";
@@ -62,7 +72,6 @@ require_once '../includes/header.php';
      ============================================================ -->
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="fw-bold mb-0">👤 Manage Users</h2>
-    <span class="badge bg-secondary fs-6"><?php echo count($users); ?> users</span>
 </div>
 
 <!-- Search Bar -->
@@ -73,81 +82,139 @@ require_once '../includes/header.php';
         </span>
         <input type="text"
                class="form-control search-input"
-               placeholder="Search users by name, email, or role..."
+               placeholder="Search users by name, email..."
                style="background: var(--bg-card); border-color: var(--border-color); color: var(--text-primary);">
     </div>
 </div>
 
 <!-- ============================================================
-     USERS TABLE
+     USER TABS
      ============================================================ -->
-<div class="card glass-card">
-    <div class="card-body">
-        <?php if (empty($users)): ?>
-            <div class="alert alert-info text-center">
-                No users found in the system.
+<ul class="nav nav-tabs mb-4" id="userTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active fw-bold" id="participants-tab" data-bs-toggle="tab" data-bs-target="#participants" type="button" role="tab" aria-controls="participants" aria-selected="true">
+            Participants <span class="badge bg-secondary ms-1"><?php echo count($participants); ?></span>
+        </button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link fw-bold" id="organizers-tab" data-bs-toggle="tab" data-bs-target="#organizers" type="button" role="tab" aria-controls="organizers" aria-selected="false">
+            Organizers <span class="badge bg-secondary ms-1"><?php echo count($organizers); ?></span>
+        </button>
+    </li>
+</ul>
+
+<div class="tab-content" id="userTabsContent">
+    
+    <!-- Participants Tab -->
+    <div class="tab-pane fade show active" id="participants" role="tabpanel" aria-labelledby="participants-tab">
+        <div class="card glass-card">
+            <div class="card-body">
+                <?php if (empty($participants)): ?>
+                    <div class="alert alert-info text-center mb-0">
+                        No participants found in the system.
+                    </div>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle searchable-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Mobile</th>
+                                    <th>Joined Date</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($participants as $index => $user): ?>
+                                    <tr>
+                                        <td><?php echo $index + 1; ?></td>
+                                        <td class="fw-bold"><?php echo htmlspecialchars($user['Name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars($user['Email'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars($user['Mobile'] ?? '—', ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars(date('d M Y', strtotime($user['created_at'])), ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td class="text-center">
+                                            <a href="manage_users.php?delete_id=<?php echo (int) $user['User_ID']; ?>"
+                                               class="btn btn-sm btn-outline-danger confirm-action"
+                                               title="Delete User"
+                                               onclick="return confirm('Are you sure you want to delete this participant? This action cannot be undone.');">
+                                                🗑️ Delete
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
             </div>
-        <?php else: ?>
-            <div class="table-responsive">
-                <table class="table table-custom align-middle searchable-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Mobile</th>
-                            <th>Role</th>
-                            <th>Joined Date</th>
-                            <th class="text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($users as $index => $user): ?>
-                            <?php
-                                // Determine role badge class
-                                $roleBadge = 'bg-secondary';
-                                switch ($user['Role']) {
-                                    case 'Admin':       $roleBadge = 'bg-info';    break;
-                                    case 'Organizer':   $roleBadge = 'bg-warning text-dark'; break;
-                                    case 'Participant': $roleBadge = 'bg-success'; break;
-                                }
-                            ?>
-                            <tr>
-                                <td><?php echo $index + 1; ?></td>
-                                <td><?php echo htmlspecialchars($user['Name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($user['Email'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td><?php echo htmlspecialchars($user['Mobile'] ?? '—', ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td>
-                                    <span class="badge <?php echo $roleBadge; ?>">
-                                        <?php echo htmlspecialchars($user['Role'], ENT_QUOTES, 'UTF-8'); ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <?php echo htmlspecialchars(
-                                        date('d M Y', strtotime($user['created_at'])),
-                                        ENT_QUOTES, 'UTF-8'
-                                    ); ?>
-                                </td>
-                                <td class="text-center">
-                                    <?php if ($user['Role'] !== 'Admin'): ?>
-                                        <!-- Delete button – protected against Admin deletion -->
-                                        <a href="manage_users.php?delete_id=<?php echo (int) $user['User_ID']; ?>"
-                                           class="btn btn-sm btn-outline-danger confirm-action"
-                                           title="Delete User"
-                                           onclick="return confirm('Are you sure you want to delete this user? This action cannot be undone.');">
-                                            🗑️ Delete
-                                        </a>
-                                    <?php else: ?>
-                                        <span class="text-muted small">Protected</span>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endif; ?>
+        </div>
     </div>
+
+    <!-- Organizers Tab -->
+    <div class="tab-pane fade" id="organizers" role="tabpanel" aria-labelledby="organizers-tab">
+        <div class="card glass-card">
+            <div class="card-body">
+                <?php if (empty($organizers)): ?>
+                    <div class="alert alert-info text-center mb-0">
+                        No organizers found in the system.
+                    </div>
+                <?php else: ?>
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle searchable-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Mobile</th>
+                                    <th>Status</th>
+                                    <th>Joined Date</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($organizers as $index => $user): ?>
+                                    <?php
+                                        $statusBadge = 'bg-secondary';
+                                        if (isset($user['Account_Status'])) {
+                                            switch ($user['Account_Status']) {
+                                                case 'Approved': $statusBadge = 'bg-success'; break;
+                                                case 'Pending':  $statusBadge = 'bg-warning text-dark'; break;
+                                                case 'Rejected': $statusBadge = 'bg-danger'; break;
+                                            }
+                                        }
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $index + 1; ?></td>
+                                        <td class="fw-bold"><?php echo htmlspecialchars($user['Name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars($user['Email'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars($user['Mobile'] ?? '—', ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td>
+                                            <span class="badge <?php echo $statusBadge; ?>">
+                                                <?php echo htmlspecialchars($user['Account_Status'] ?? 'Unknown', ENT_QUOTES, 'UTF-8'); ?>
+                                            </span>
+                                        </td>
+                                        <td><?php echo htmlspecialchars(date('d M Y', strtotime($user['created_at'])), ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td class="text-center">
+                                            <a href="manage_users.php?delete_id=<?php echo (int) $user['User_ID']; ?>"
+                                               class="btn btn-sm btn-outline-danger confirm-action"
+                                               title="Delete User"
+                                               onclick="return confirm('Are you sure you want to delete this organizer? This action cannot be undone.');">
+                                                🗑️ Delete
+                                            </a>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 <?php require_once '../includes/footer.php'; ?>

@@ -63,13 +63,13 @@ $filter_category = trim($_GET['category'] ?? 'All');
 
 // ── Venue Dropdown – distinct venues ────────────────────────
 $stmt_venues = $pdo->prepare(
-    'SELECT DISTINCT Venue FROM events WHERE Event_Date >= CURDATE() ORDER BY Venue ASC'
+    "SELECT DISTINCT Venue FROM events WHERE Event_Date >= CURDATE() AND Status = 'Approved' ORDER BY Venue ASC"
 );
 $stmt_venues->execute();
 $venue_list = $stmt_venues->fetchAll(PDO::FETCH_COLUMN);
 
 // ── Build Dynamic WHERE Clause ──────────────────────────────
-$where  = ' WHERE e.Event_Date >= CURDATE() ';
+$where  = " WHERE e.Event_Date >= CURDATE() AND e.Status = 'Approved' ";
 $params = [];
 
 // Category filter
@@ -118,7 +118,7 @@ $events = $stmt_events->fetchAll(PDO::FETCH_ASSOC);
 $stmt_counts = $pdo->prepare(
     "SELECT Event_Category, COUNT(*) as cnt
        FROM events
-      WHERE Event_Date >= CURDATE()
+      WHERE Event_Date >= CURDATE() AND Status = 'Approved'
       GROUP BY Event_Category"
 );
 $stmt_counts->execute();

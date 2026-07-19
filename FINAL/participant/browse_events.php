@@ -39,7 +39,7 @@ $venue_list = $stmt_venues->fetchAll(PDO::FETCH_COLUMN);
    Parameters are collected in $params array for the
    prepared statement; conditions appended to $where.
    ────────────────────────────────────────────────────────── */
-$where  = ' WHERE 1 = 1 ';   // base condition always true
+$where  = " WHERE e.Status = 'Approved' ";   // base condition only approved events
 $params = [];
 
 /* Text search – matches Event_Name, Description, or Venue */

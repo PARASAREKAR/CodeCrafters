@@ -185,16 +185,19 @@ if ($action === 'register') {
 
     // 11. Insert the new user
     try {
+        $accountStatus = ($role === 'Organizer') ? 'Pending' : 'Approved';
+
         $stmt = $pdo->prepare(
-            'INSERT INTO users (Name, Email, Mobile, Password, Role, created_at)
-             VALUES (:name, :email, :mobile, :password, :role, NOW())'
+            'INSERT INTO users (Name, Email, Mobile, Password, Role, Account_Status, created_at)
+             VALUES (:name, :email, :mobile, :password, :role, :account_status, NOW())'
         );
         $stmt->execute([
-            ':name'     => $name,
-            ':email'    => $email,
-            ':mobile'   => $mobile,
-            ':password' => $hashedPassword,
-            ':role'     => $role,
+            ':name'           => $name,
+            ':email'          => $email,
+            ':mobile'         => $mobile,
+            ':password'       => $hashedPassword,
+            ':role'           => $role,
+            ':account_status' => $accountStatus,
         ]);
 
         // Clear preserved form data on success
@@ -228,7 +231,7 @@ elseif ($action === 'login') {
     // 4. Look up the user by email
     try {
         $stmt = $pdo->prepare(
-            'SELECT User_ID, Name, Email, Password, Role FROM users WHERE Email = :email LIMIT 1'
+            'SELECT User_ID, Name, Email, Password, Role, Account_Status FROM users WHERE Email = :email LIMIT 1'
         );
         $stmt->execute([':email' => $email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -240,6 +243,15 @@ elseif ($action === 'login') {
     // 5. Verify password
     if (!$user || !password_verify($password, $user['Password'])) {
         flashRedirect('Invalid email or password.', 'danger', 'login.php');
+    }
+
+    // 5a. Check Account Status
+    if ($user['Account_Status'] === 'Pending') {
+        flashRedirect('Your account is pending admin approval. Please wait for an admin to accept your request.', 'warning', 'login.php');
+    }
+
+    if ($user['Account_Status'] === 'Rejected') {
+        flashRedirect('Your account request has been rejected by an admin.', 'danger', 'login.php');
     }
 
     // 6. Generate OTP and store temporary credentials

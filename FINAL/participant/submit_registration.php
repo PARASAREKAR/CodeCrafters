@@ -56,12 +56,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->execute([$event_id]);
     $count = (int) $stmt->fetch(PDO::FETCH_ASSOC)['cnt'];
 
-    $stmt2 = $pdo->prepare('SELECT Capacity, Event_Name FROM events WHERE Event_ID = ?');
+    $stmt2 = $pdo->prepare('SELECT Capacity, Event_Name, Status FROM events WHERE Event_ID = ?');
     $stmt2->execute([$event_id]);
     $event_row = $stmt2->fetch(PDO::FETCH_ASSOC);
 
     if (!$event_row) {
         setFlashMessage('error', 'Event not found.');
+        header('Location: browse_events.php');
+        exit;
+    }
+
+    if ($event_row['Status'] !== 'Approved') {
+        setFlashMessage('error', 'This event is not yet approved for registration.');
         header('Location: browse_events.php');
         exit;
     }
@@ -132,6 +138,12 @@ $event = $stmt_event->fetch(PDO::FETCH_ASSOC);
 
 if (!$event) {
     setFlashMessage('error', 'Event not found.');
+    header('Location: browse_events.php');
+    exit;
+}
+
+if ($event['Status'] !== 'Approved') {
+    setFlashMessage('error', 'This event is not yet approved for registration.');
     header('Location: browse_events.php');
     exit;
 }
