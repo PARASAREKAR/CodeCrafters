@@ -15,6 +15,13 @@ session_start();
 require_once '../config/db_connect.php';
 require_once '../includes/helpers.php';
 
+require_once '../src/PHPMailer.php';
+require_once '../src/SMTP.php';
+require_once '../src/Exception.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 // ── Only accept POST requests ──
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: login.php');
@@ -206,11 +213,9 @@ if ($action === 'register') {
         flashRedirect('Registration successful! You can now log in.', 'success', 'login.php');
 
     } catch (PDOException $e) {
-        error_log('Registration insert error: ' . $e->getMessage());
-        flashRedirect('Registration failed. Please try again later.', 'danger', 'register.php');
+    die("Login Query Error: " . $e->getMessage());
     }
 }
-
 // ============================================================
 //  ACTION: LOGIN
 // ============================================================
@@ -265,6 +270,32 @@ elseif ($action === 'login') {
     $_SESSION['login_otp']        = $otp;
     $_SESSION['login_otp_expiry'] = time() + 300; // 5 minutes validity
     $_SESSION['otp_attempts']     = 0;
+    $mail = new PHPMailer(true);
+
+try {
+    $mail->isSMTP();
+    $mail->Host = 'smtp.gmail.com';
+    $mail->SMTPAuth = true;
+    $mail->Username = 'eventoraganizers2026@gmail.com';
+    $mail->Password = 'gdtfdzdcubqpenyq';
+
+    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+    $mail->Port = 587;
+
+    $mail->setFrom('eventoraganizers2026@gmail.com', 'Event Registration System');
+    $mail->addAddress($user['Email']);
+
+    $mail->isHTML(true);
+    $mail->Subject = 'Login OTP';
+    $mail->Body = "<h2>Your OTP is: <b>$otp</b></h2>";
+
+    $mail->send();
+    
+
+} catch (Exception $e) {
+    die("Mailer Error: " . $mail->ErrorInfo);
+}
+
 
     // Redirect to OTP verification page
     header('Location: otp_verify.php');

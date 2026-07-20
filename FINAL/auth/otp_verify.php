@@ -122,16 +122,17 @@ require_once '../includes/header.php';
                 We have generated a one-time verification code for your account. Please enter it below.
             </p>
 
-            <!-- ── Simulated OTP Toast Alert ── -->
+            <!-- ── Simulated OTP Toast Alert ── 
             <div class="alert alert-info border-0 shadow-sm p-3 mb-4 rounded-3 text-start d-flex align-items-center" role="alert">
                 <div class="fs-4 me-3">🔒</div>
                 <div>
                     <strong class="d-block text-uppercase small text-info" style="letter-spacing: 0.5px;">Simulated OTP Code</strong>
                     <span class="fs-5 fw-bold font-monospace text-primary" style="letter-spacing: 2px;">
-                        <?php echo (int) $_SESSION['login_otp']; ?>
+                       <?php echo (int) $_SESSION['login_otp']; ?> 
                     </span>
                 </div>
             </div>
+                -->
 
             <!-- ── Form ── -->
             <form action="otp_verify.php" method="POST">
