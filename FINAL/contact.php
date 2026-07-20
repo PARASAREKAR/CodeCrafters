@@ -67,6 +67,11 @@ require_once 'includes/helpers.php';
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="browse_events.php">
+                            <i class="bi bi-calendar-event me-1"></i>Browse Events
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="about.php">
                             <i class="bi bi-info-circle me-1"></i>About Us
                         </a>

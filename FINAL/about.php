@@ -67,6 +67,11 @@ require_once 'includes/helpers.php';
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="browse_events.php">
+                            <i class="bi bi-calendar-event me-1"></i>Browse Events
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link active" href="about.php">
                             <i class="bi bi-info-circle me-1"></i>About Us
                         </a>
@@ -162,6 +167,63 @@ require_once 'includes/helpers.php';
                         <i class="bi bi-people display-5 mb-3" style="color: var(--accent);"></i>
                         <h5 class="fw-bold">Community-Focused</h5>
                         <p class="text-muted">Built to cultivate lasting relationships, networking, and direct collaboration.</p>
+                    </div>
+                </div>
+            </div>
+        <!-- How EventHub Works -->
+        <section class="py-5 mb-5">
+            <style>
+                .relative-card {
+                    position: relative;
+                    overflow: visible !important;
+                    transition: transform 0.3s ease, box-shadow 0.3s ease;
+                }
+                .relative-card:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2) !important;
+                }
+                .step-badge {
+                    position: absolute;
+                    top: -18px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 36px;
+                    height: 36px;
+                    background: var(--accent);
+                    color: #fff;
+                    font-weight: 700;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+                    border: 2px solid var(--border);
+                }
+            </style>
+            <h3 class="text-center fw-bold mb-5" data-aos="fade-up">How EventHub Works</h3>
+            <div class="row g-4">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="glass-card p-4 h-100 text-center relative-card">
+                        <div class="step-badge">1</div>
+                        <i class="bi bi-search display-5 mb-3 d-block mt-2" style="color: var(--accent);"></i>
+                        <h5 class="fw-bold">Discover Events</h5>
+                        <p class="text-muted">Explore world-class events, tech conferences, and workshops with custom category filters and dates.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="glass-card p-4 h-100 text-center relative-card">
+                        <div class="step-badge">2</div>
+                        <i class="bi bi-pencil-square display-5 mb-3 d-block mt-2" style="color: var(--accent);"></i>
+                        <h5 class="fw-bold">Register Instantly</h5>
+                        <p class="text-muted">Register for events in one click. Track real-time seat availability and manage pending approvals.</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="glass-card p-4 h-100 text-center relative-card">
+                        <div class="step-badge">3</div>
+                        <i class="bi bi-check-circle display-5 mb-3 d-block mt-2" style="color: var(--accent);"></i>
+                        <h5 class="fw-bold">Attend & Engage</h5>
+                        <p class="text-muted">Get your attendance marked by organizers, network with peers, and download event materials.</p>
                     </div>
                 </div>
             </div>
