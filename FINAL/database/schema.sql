@@ -18,7 +18,6 @@ CREATE TABLE users (
     Mobile VARCHAR(15),
     Password VARCHAR(255) NOT NULL,
     Role VARCHAR(20) NOT NULL DEFAULT 'Participant',
-    Account_Status VARCHAR(20) DEFAULT 'Approved',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_email (Email),
     INDEX idx_role (Role)
@@ -37,7 +36,6 @@ CREATE TABLE events (
     Organizer VARCHAR(100),
     Capacity INT NOT NULL DEFAULT 100,
     Event_Category VARCHAR(50) NOT NULL DEFAULT 'General',
-    Status VARCHAR(20) DEFAULT 'Approved',
     created_by INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_event_date (Event_Date),

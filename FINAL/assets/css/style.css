@@ -36,6 +36,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Global Heading & Text Contrast Overrides for Dark Themes */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  color: var(--text-primary);
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
 /* Ensure main content pushes footer to the bottom */
 main,
 .main-content {
