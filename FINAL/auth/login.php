@@ -91,6 +91,14 @@ require_once '../includes/header.php';
                 </div>
             </form>
 
+            <!-- Forgot Password Link -->
+            <p class="text-center mt-3 mb-2">
+                <a href="forgot_password.php"
+                   style="color: var(--accent); text-decoration: none; font-weight: 600;">
+                    Forgot Password?
+                </a>
+            </p>
+
             <!-- ── Register Link ── -->
             <p class="text-center mt-4 mb-0" style="color: var(--text-secondary);">
                 Don't have an account?

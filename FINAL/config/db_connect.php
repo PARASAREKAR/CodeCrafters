@@ -8,11 +8,11 @@
  */
 
 // Database credentials
+
 $db_host = 'localhost';
 $db_name = 'event_registration_db';
 $db_user = 'root';
-$db_pass = '<h1 style="color:red;">TEST OTP PAGE</h1>';
-
+$db_pass = '';
 // DSN with utf8mb4 charset
 $dsn = "mysql:host={$db_host};dbname={$db_name};charset=utf8mb4";
 
@@ -27,7 +27,5 @@ try {
     // Create PDO instance
     $pdo = new PDO($dsn, $db_user, $db_pass, $options);
 } catch (PDOException $e) {
-    // Log the error and show a user-friendly message
-    error_log("Database Connection Error: " . $e->getMessage());
-    die("Database connection failed. Please try again later.");
+    die($e->getMessage());
 }
