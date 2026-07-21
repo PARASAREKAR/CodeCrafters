@@ -136,10 +136,8 @@ require_once 'includes/helpers.php';
                 </p>
             </div>
             <div class="col-lg-6 text-center">
-                <div class="glass-card p-5" style="border-radius: 24px;">
-                    <i class="bi bi-rocket-takeoff display-1" style="color: var(--accent);"></i>
-                    <h4 class="fw-bold mt-3">Empowering Innovation</h4>
-                    <p class="text-muted mb-0">Transforming how you manage, track, and attend professional meetups.</p>
+                <div class="glass-card p-3" style="border-radius: 28px; overflow: hidden; transform: rotate(1deg);">
+                    <img src="assets/images/company_showcase_3.png" alt="High-tech event schedules lobby showcase" class="img-fluid" style="border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.3);">
                 </div>
             </div>
         </section>

@@ -6,6 +6,122 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 require_once 'includes/helpers.php';
+require_once 'config/db_connect.php';
+
+require_once 'src/PHPMailer.php';
+require_once 'src/SMTP.php';
+require_once 'src/Exception.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+$success_submitted = false;
+$sender_name = '';
+$sender_email = '';
+$sender_subject = '';
+$errors = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
+    $sender_name    = trim(htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8'));
+    $sender_email   = trim(filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL));
+    $sender_subject = trim(htmlspecialchars($_POST['subject'] ?? '', ENT_QUOTES, 'UTF-8'));
+    $sender_message = trim(htmlspecialchars($_POST['message'] ?? '', ENT_QUOTES, 'UTF-8'));
+
+    if (empty($sender_name)) {
+        $errors[] = "Please enter your name.";
+    }
+    if (!$sender_email) {
+        $errors[] = "Please enter a valid email address.";
+    }
+    if (empty($sender_subject)) {
+        $errors[] = "Please specify a subject.";
+    }
+    if (empty($sender_message)) {
+        $errors[] = "Please enter your message.";
+    }
+
+    if (empty($errors)) {
+        try {
+            $stmt = $pdo->prepare(
+                "INSERT INTO contact_messages (name, email, subject, message) VALUES (?, ?, ?, ?)"
+            );
+            $stmt->execute([$sender_name, $_POST['email'], $sender_subject, $sender_message]);
+            
+            // ── Send Email to Sender using PHPMailer ─────────────
+            $mailSender = new PHPMailer(true);
+            try {
+                $mailSender->isSMTP();
+                $mailSender->Host       = 'smtp.gmail.com';
+                $mailSender->SMTPAuth   = true;
+                $mailSender->Username   = 'eventoraganizers2026@gmail.com';
+                $mailSender->Password   = 'gdtfdzdcubqpenyq';
+                $mailSender->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mailSender->Port       = 587;
+
+                $mailSender->setFrom('eventoraganizers2026@gmail.com', 'EventHub Support');
+                $mailSender->addAddress($sender_email, $sender_name);
+
+                $mailSender->isHTML(true);
+                $mailSender->Subject = "Contact Receipt: " . $sender_subject;
+                $mailSender->Body = "
+                    <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
+                        <h2 style='color: #0d6efd;'>Dear {$sender_name},</h2>
+                        <p>Thank you for contacting EventHub! Your message has been recorded successfully.</p>
+                        <hr style='border: 0; border-top: 1px solid #eee;'>
+                        <p><b>Subject:</b> {$sender_subject}</p>
+                        <p><b>Message:</b><br>" . nl2br($sender_message) . "</p>
+                        <hr style='border: 0; border-top: 1px solid #eee;'>
+                        <p>Our support team is reviewing your inquiry and will send a formal reply to this email address within 24-48 business hours.</p>
+                        <br>
+                        <p>Best regards,<br><b>EventHub Support Team</b><br>eventoraganizers2026@gmail.com</p>
+                    </div>
+                ";
+                $mailSender->send();
+            } catch (Exception $e) {
+                error_log('Contact Sender Mail Error: ' . $mailSender->ErrorInfo);
+            }
+
+            // ── Send Email to Organizer/Admin using PHPMailer ────
+            $mailAdmin = new PHPMailer(true);
+            try {
+                $mailAdmin->isSMTP();
+                $mailAdmin->Host       = 'smtp.gmail.com';
+                $mailAdmin->SMTPAuth   = true;
+                $mailAdmin->Username   = 'eventoraganizers2026@gmail.com';
+                $mailAdmin->Password   = 'gdtfdzdcubqpenyq';
+                $mailAdmin->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mailAdmin->Port       = 587;
+
+                $mailAdmin->setFrom('eventoraganizers2026@gmail.com', 'EventHub System');
+                $mailAdmin->addAddress('eventoraganizers2026@gmail.com', 'EventHub Support');
+                $mailAdmin->addReplyTo($sender_email, $sender_name);
+
+                $mailAdmin->isHTML(true);
+                $mailAdmin->Subject = "[EventHub Support] New Message: " . $sender_subject;
+                $mailAdmin->Body = "
+                    <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
+                        <h2 style='color: #0d6efd;'>New Support Message Received</h2>
+                        <p>You have received a new support message via the EventHub Contact Us page.</p>
+                        <hr style='border: 0; border-top: 1px solid #eee;'>
+                        <p><b>Sender Name:</b> {$sender_name}</p>
+                        <p><b>Sender Email:</b> {$sender_email}</p>
+                        <p><b>Subject:</b> {$sender_subject}</p>
+                        <p><b>Message:</b><br>" . nl2br($sender_message) . "</p>
+                        <hr style='border: 0; border-top: 1px solid #eee;'>
+                        <p>Log in to the Admin Dashboard to view/manage all contact messages.</p>
+                    </div>
+                ";
+                $mailAdmin->send();
+            } catch (Exception $e) {
+                error_log('Contact Admin Mail Error: ' . $mailAdmin->ErrorInfo);
+            }
+
+            $success_submitted = true;
+        } catch (PDOException $e) {
+            $errors[] = "Failed to submit your message: " . $e->getMessage();
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
@@ -128,55 +244,83 @@ require_once 'includes/helpers.php';
         <div class="row justify-content-center" data-aos="fade-up">
             <div class="col-lg-8">
                 <div class="glass-card p-5" style="border-radius: 24px;">
-                    <div class="row g-4 mb-5">
-                        <div class="col-md-6">
-                            <div class="p-4 text-center" style="background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid var(--border);">
-                                <i class="bi bi-envelope-paper display-4 mb-3" style="color: var(--accent);"></i>
-                                <h5 class="fw-bold">Email Us</h5>
-                                <p class="text-muted mb-0">
-                                    <a href="mailto:eventoraganizers2026@gmail.com" style="color: var(--text-secondary); text-decoration: none;">
-                                        eventoraganizers2026@gmail.com
-                                    </a>
+                    <?php if ($success_submitted): ?>
+                        <div class="text-center py-4">
+                            <i class="bi bi-patch-check-fill display-1 text-success mb-4 d-block" data-aos="zoom-in"></i>
+                            <h3 class="fw-bold mb-3" data-aos="fade-up">Message Recorded!</h3>
+                            <p class="text-muted mb-4 px-lg-5" style="line-height: 1.8; font-size: 1.05rem;" data-aos="fade-up" data-aos-delay="100">
+                                Thank you, <strong><?php echo htmlspecialchars($sender_name); ?></strong>. Your inquiry regarding <em>"<?php echo htmlspecialchars($sender_subject); ?>"</em> has been securely recorded in our database. 
+                            </p>
+                            <div class="p-4 mb-4 mx-lg-5 text-start" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 16px;" data-aos="fade-up" data-aos-delay="200">
+                                <h6 class="fw-bold mb-2 text-accent"><i class="bi bi-info-circle me-2"></i>Official Support Receipt</h6>
+                                <p class="text-muted small mb-0" style="line-height: 1.6;">
+                                    Our administrative and organizing support team has received your query. A response has been queued for your email: <strong><?php echo htmlspecialchars($_POST['email']); ?></strong>. We will review your message details and provide a formal reply within 24 to 48 business hours. Thank you for using EventHub!
                                 </p>
                             </div>
+                            <a href="contact.php" class="btn btn-accent px-4 py-2" data-aos="fade-up" data-aos-delay="300">
+                                <i class="bi bi-arrow-left me-2"></i>Send Another Message
+                            </a>
                         </div>
-                        <div class="col-md-6">
-                            <div class="p-4 text-center" style="background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid var(--border);">
-                                <i class="bi bi-telephone display-4 mb-3" style="color: var(--accent);"></i>
-                                <h5 class="fw-bold">Call Us</h5>
-                                <p class="text-muted mb-0">Mobile number will be provided later.</p>
+                    <?php else: ?>
+                        <?php if (!empty($errors)): ?>
+                            <div class="alert alert-danger mb-4" role="alert">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <?php echo implode('<br>', $errors); ?>
                             </div>
-                        </div>
-                    </div>
+                        <?php endif; ?>
 
-                    <!-- Contact Form -->
-                    <h3 class="fw-bold text-center mb-4">Send Us a Message</h3>
-                    <form action="#" method="POST">
-                        <div class="row g-3">
+                        <div class="row g-4 mb-5">
                             <div class="col-md-6">
-                                <label for="name" class="form-label text-muted">Your Name</label>
-                                <input type="text" class="form-control form-control-custom" id="name" required placeholder="Enter name">
+                                <div class="p-4 text-center" style="background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid var(--border);">
+                                    <i class="bi bi-envelope-paper display-4 mb-3" style="color: var(--accent);"></i>
+                                    <h5 class="fw-bold">Email Us</h5>
+                                    <p class="text-muted mb-0">
+                                        <a href="mailto:eventoraganizers2026@gmail.com" style="color: var(--text-secondary); text-decoration: none;">
+                                            eventoraganizers2026@gmail.com
+                                        </a>
+                                    </p>
+                                </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="email" class="form-label text-muted">Your Email</label>
-                                <input type="email" class="form-control form-control-custom" id="email" required placeholder="Enter email">
-                            </div>
-                            <div class="col-12">
-                                <label for="subject" class="form-label text-muted">Subject</label>
-                                <input type="text" class="form-control form-control-custom" id="subject" required placeholder="Enter subject">
-                            </div>
-                            <div class="col-12">
-                                <label for="message" class="form-label text-muted">Message</label>
-                                <textarea class="form-control form-control-custom" id="message" rows="5" required placeholder="Type your message here..."></textarea>
-                            </div>
-                            <div class="col-12 text-center mt-4">
-                                <button type="button" class="btn btn-accent px-5 py-2" onclick="alert('Thank you! This contact form is in demo mode.')">
-                                    <i class="bi bi-send me-2"></i>Send Message
-                                </button>
+                                <div class="p-4 text-center" style="background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid var(--border);">
+                                    <i class="bi bi-telephone display-4 mb-3" style="color: var(--accent);"></i>
+                                    <h5 class="fw-bold">Call Us</h5>
+                                    <p class="text-muted mb-0">Mobile number will be provided later.</p>
+                                </div>
                             </div>
                         </div>
-                    </form>
-                </div>
+
+                        <!-- Contact Form -->
+                        <h3 class="fw-bold text-center mb-4">Send Us a Message</h3>
+                        <form action="contact.php" method="POST">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="name" class="form-label text-muted">Your Name</label>
+                                    <input type="text" class="form-control form-control-custom" id="name" name="name" required placeholder="Enter name"
+                                           value="<?php echo htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label text-muted">Your Email</label>
+                                    <input type="email" class="form-control form-control-custom" id="email" name="email" required placeholder="Enter email"
+                                           value="<?php echo htmlspecialchars($_POST['email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                </div>
+                                <div class="col-12">
+                                    <label for="subject" class="form-label text-muted">Subject</label>
+                                    <input type="text" class="form-control form-control-custom" id="subject" name="subject" required placeholder="Enter subject"
+                                           value="<?php echo htmlspecialchars($_POST['subject'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                </div>
+                                <div class="col-12">
+                                    <label for="message" class="form-label text-muted">Message</label>
+                                    <textarea class="form-control form-control-custom" id="message" name="message" rows="5" required placeholder="Type your message here..."><?php echo htmlspecialchars($_POST['message'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
+                                </div>
+                                <div class="col-12 text-center mt-4">
+                                    <button type="submit" name="submit_message" class="btn btn-accent px-5 py-2">
+                                        <i class="bi bi-send me-2"></i>Send Message
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    <?php endif; ?>
             </div>
         </div>
     </main>

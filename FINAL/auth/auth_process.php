@@ -87,9 +87,9 @@ if ($action === 'register') {
         flashRedirect('Please enter a valid email address.', 'danger', 'register.php');
     }
 
-    // 5. Validate mobile pattern (10–15 digits)
-    if (!preg_match('/^[0-9]{10,15}$/', $mobile)) {
-        flashRedirect('Please enter a valid mobile number (10–15 digits).', 'danger', 'register.php');
+    // 5. Validate mobile pattern (exactly 10 digits)
+    if (!preg_match('/^[0-9]{10}$/', $mobile)) {
+        flashRedirect('Please enter a valid 10-digit mobile number.', 'danger', 'register.php');
     }
 
     // 6. Validate password strength (Google-style rules)
@@ -99,9 +99,9 @@ if ($action === 'register') {
         flashRedirect('Password cannot start or end with a blank space.', 'danger', 'register.php');
     }
 
-    // 6b. Minimum length: 12 characters
-    if (strlen($password) < 12) {
-        flashRedirect('Password must be at least 12 characters long.', 'danger', 'register.php');
+    // 6b. Minimum length: 8 characters
+    if (strlen($password) < 8) {
+        flashRedirect('Password must be at least 8 characters long.', 'danger', 'register.php');
     }
 
     // 6c. Require uppercase letter
@@ -190,13 +190,47 @@ if ($action === 'register') {
     // 10. Hash the password
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
+    // 10a. Handle profile picture upload (if present and valid)
+    $profile_pic_path = null;
+    if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
+        $fileTmpPath = $_FILES['profile_pic']['tmp_name'];
+        $fileName = $_FILES['profile_pic']['name'];
+        $fileSize = $_FILES['profile_pic']['size'];
+        
+        $fileNameCmps = explode(".", $fileName);
+        $fileExtension = strtolower(end($fileNameCmps));
+        
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+        if (in_array($fileExtension, $allowedExtensions)) {
+            // Check size (2MB)
+            if ($fileSize <= 2 * 1024 * 1024) {
+                // Ensure upload directory exists
+                $uploadDir = '../assets/images/uploads/profile_pics/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+                
+                $newFileName = md5(time() . $fileName) . '.' . $fileExtension;
+                $dest_path = $uploadDir . $newFileName;
+                
+                if (move_uploaded_file($fileTmpPath, $dest_path)) {
+                    $profile_pic_path = 'assets/images/uploads/profile_pics/' . $newFileName;
+                }
+            } else {
+                flashRedirect('Profile picture size exceeds 2MB.', 'danger', 'register.php');
+            }
+        } else {
+            flashRedirect('Invalid profile picture file type. Only JPG, PNG, and GIF allowed.', 'danger', 'register.php');
+        }
+    }
+
     // 11. Insert the new user
     try {
         $accountStatus = ($role === 'Organizer') ? 'Pending' : 'Approved';
 
         $stmt = $pdo->prepare(
-            'INSERT INTO users (Name, Email, Mobile, Password, Role, Account_Status, created_at)
-             VALUES (:name, :email, :mobile, :password, :role, :account_status, NOW())'
+            'INSERT INTO users (Name, Email, Mobile, Password, Role, Account_Status, Profile_Pic, created_at)
+             VALUES (:name, :email, :mobile, :password, :role, :account_status, :profile_pic, NOW())'
         );
         $stmt->execute([
             ':name'           => $name,
@@ -205,6 +239,7 @@ if ($action === 'register') {
             ':password'       => $hashedPassword,
             ':role'           => $role,
             ':account_status' => $accountStatus,
+            ':profile_pic'    => $profile_pic_path,
         ]);
 
         // Clear preserved form data on success
@@ -213,7 +248,7 @@ if ($action === 'register') {
         flashRedirect('Registration successful! You can now log in.', 'success', 'login.php');
 
     } catch (PDOException $e) {
-    die("Login Query Error: " . $e->getMessage());
+        die("Registration Query Error: " . $e->getMessage());
     }
 }
 // ============================================================
@@ -236,7 +271,7 @@ elseif ($action === 'login') {
     // 4. Look up the user by email
     try {
         $stmt = $pdo->prepare(
-            'SELECT User_ID, Name, Email, Password, Role, Account_Status FROM users WHERE Email = :email LIMIT 1'
+            'SELECT User_ID, Name, Email, Password, Role, Account_Status, Profile_Pic FROM users WHERE Email = :email LIMIT 1'
         );
         $stmt->execute([':email' => $email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -262,10 +297,11 @@ elseif ($action === 'login') {
     // 6. Generate OTP and store temporary credentials
     $otp = rand(100000, 999999);
     $_SESSION['temp_user'] = [
-        'User_ID' => $user['User_ID'],
-        'Name'    => $user['Name'],
-        'Email'   => $user['Email'],
-        'Role'    => $user['Role']
+        'User_ID'     => $user['User_ID'],
+        'Name'        => $user['Name'],
+        'Email'       => $user['Email'],
+        'Role'        => $user['Role'],
+        'Profile_Pic' => $user['Profile_Pic']
     ];
     $_SESSION['login_otp']        = $otp;
     $_SESSION['login_otp_expiry'] = time() + 300; // 5 minutes validity

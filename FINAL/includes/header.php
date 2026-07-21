@@ -14,6 +14,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Prevent browser caching (back-button security after logout)
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+
 // Include helpers for flash messages and auth checks
 require_once __DIR__ . '/helpers.php';
 ?>
@@ -35,6 +41,9 @@ require_once __DIR__ . '/helpers.php';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css" rel="stylesheet">
 
     <!-- AOS Animation CSS -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -88,6 +97,9 @@ require_once __DIR__ . '/helpers.php';
                                 <a class="nav-link" href="../admin/manage_requests.php">Requests</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="../admin/view_messages.php">Messages</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="../admin/reports.php">Reports</a>
                             </li>
 
@@ -118,19 +130,33 @@ require_once __DIR__ . '/helpers.php';
 
                         <!-- User info & Logout (all logged-in roles) -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="userDropdown" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <?php echo htmlspecialchars($_SESSION['user_name'] ?? 'User', ENT_QUOTES, 'UTF-8'); ?>
+                                <?php if (!empty($_SESSION['user_avatar'])): ?>
+                                    <img src="../<?php echo htmlspecialchars($_SESSION['user_avatar'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                         alt="Avatar" class="rounded-circle" style="width: 28px; height: 28px; object-fit: cover; border: 1.5px solid var(--accent);">
+                                <?php else: ?>
+                                    <i class="bi bi-person-circle fs-5" style="color: var(--accent);"></i>
+                                <?php endif; ?>
+                                <span><?php echo htmlspecialchars($_SESSION['user_name'] ?? 'User', ENT_QUOTES, 'UTF-8'); ?></span>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown" style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;">
                                 <li>
                                     <span class="dropdown-item-text text-muted small">
                                         Role: <?php echo htmlspecialchars($role, ENT_QUOTES, 'UTF-8'); ?>
                                     </span>
                                 </li>
-                                <li><hr class="dropdown-divider"></li>
+                                <li><hr class="dropdown-divider" style="background-color: var(--border);"></li>
                                 <li>
-                                    <a class="dropdown-item" href="../auth/logout.php">Logout</a>
+                                    <a class="dropdown-item" href="edit_profile.php" style="color: var(--text-primary);">
+                                        <i class="bi bi-person-gear me-2 text-accent"></i>Edit Profile
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider" style="background-color: var(--border);"></li>
+                                <li>
+                                    <a class="dropdown-item text-danger" href="../auth/logout.php">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                    </a>
                                 </li>
                             </ul>
                         </li>

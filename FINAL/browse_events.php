@@ -10,15 +10,15 @@ require_once __DIR__ . '/config/db_connect.php';
 $categories = [
     'All',
     'Live Now',
-    'Technology',
+    'Tech',
     'Business',
-    'Education',
-    'Health & Wellness',
-    'Arts & Culture',
+    'Creative',
     'Sports',
-    'Networking',
-    'Workshop',
-    'General'
+    'Music',
+    'Art',
+    'Food',
+    'Science',
+    'Health'
 ];
 
 // ── Read Filter Parameters ──────────────────────────────────
@@ -50,11 +50,26 @@ if ($filter_category !== '' && $filter_category !== 'All' && $filter_category !=
 
 // Text search
 if ($filter_search !== '') {
-    $where   .= ' AND (e.Event_Name LIKE ? OR e.Description LIKE ? OR e.Venue LIKE ?) ';
+    $extra_conditions = '';
+    $extra_params = [];
+    $lower_search = strtolower($filter_search);
+    
+    // Auto-match Bangalore and Bengaluru aliases
+    if (strpos($lower_search, 'bangalore') !== false || strpos($lower_search, 'bengaluru') !== false) {
+        $extra_conditions = " OR e.Venue LIKE ? OR e.Venue LIKE ? ";
+        $extra_params[] = '%Bangalore%';
+        $extra_params[] = '%Bengaluru%';
+    }
+    
+    $where   .= ' AND (e.Event_Name LIKE ? OR e.Description LIKE ? OR e.Venue LIKE ?' . $extra_conditions . ') ';
     $like_val = '%' . $filter_search . '%';
     $params[] = $like_val;
     $params[] = $like_val;
     $params[] = $like_val;
+    
+    foreach ($extra_params as $ep) {
+        $params[] = $ep;
+    }
 }
 
 // Date filter
@@ -106,7 +121,7 @@ foreach ($category_counts_raw as $row) {
 $stmt_total_active = $pdo->prepare(
     "SELECT COUNT(*) FROM events 
      WHERE Event_Date >= CURDATE() AND Status = 'Approved' 
-     AND Event_Category IN ('Technology', 'Business', 'Education', 'Health & Wellness', 'Arts & Culture', 'Sports', 'Networking', 'Workshop', 'General')"
+     AND Event_Category IN ('Tech', 'Business', 'Creative', 'Sports', 'Music', 'Art', 'Food', 'Science', 'Health')"
 );
 $stmt_total_active->execute();
 $total_upcoming = (int) $stmt_total_active->fetchColumn();
@@ -310,7 +325,7 @@ $category_counts['Live Now'] = $live_count;
                         </label>
                         <input type="text" id="search" name="search"
                                class="form-control form-control-custom"
-                               placeholder="Event name, description, venue…"
+                               placeholder="Event name, description, venue, or city (e.g. Pune, Mumbai, Bangalore)…"
                                value="<?php echo htmlspecialchars($filter_search, ENT_QUOTES, 'UTF-8'); ?>">
                     </div>
 
@@ -552,15 +567,15 @@ function getCategoryIcon($category) {
     $icons = [
         'All'               => '🌐',
         'Live Now'          => '🔴',
-        'Technology'        => '💻',
+        'Tech'              => '💻',
         'Business'          => '💼',
-        'Education'         => '📚',
-        'Health & Wellness' => '🏥',
-        'Arts & Culture'    => '🎨',
+        'Creative'          => '💡',
         'Sports'            => '⚽',
-        'Networking'        => '🤝',
-        'Workshop'          => '🛠️',
-        'General'           => '📌',
+        'Music'             => '🎵',
+        'Art'               => '🎨',
+        'Food'              => '🍛',
+        'Science'           => '🔬',
+        'Health'            => '🏥',
     ];
     return $icons[$category] ?? '📌';
 }

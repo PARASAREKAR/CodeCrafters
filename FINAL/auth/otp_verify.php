@@ -73,10 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             session_regenerate_id(true);
 
             // Log user in
-            $_SESSION['user_id']    = $tempUser['User_ID'];
-            $_SESSION['user_name']  = $tempUser['Name'];
-            $_SESSION['user_email'] = $tempUser['Email'];
-            $_SESSION['user_role']  = $tempUser['Role'];
+            $_SESSION['user_id']     = $tempUser['User_ID'];
+            $_SESSION['user_name']   = $tempUser['Name'];
+            $_SESSION['user_email']  = $tempUser['Email'];
+            $_SESSION['user_role']   = $tempUser['Role'];
+            $_SESSION['user_avatar'] = $tempUser['Profile_Pic'] ?? null;
 
             // Clear temp data
             unset($_SESSION['temp_user'], $_SESSION['login_otp'], $_SESSION['login_otp_expiry'], $_SESSION['otp_attempts']);

@@ -44,15 +44,15 @@ if (isLoggedIn()) {
 // ── Category Definitions ────────────────────────────────────
 $categories = [
     'All',
-    'Technology',
+    'Tech',
     'Business',
-    'Education',
-    'Health & Wellness',
-    'Arts & Culture',
+    'Creative',
     'Sports',
-    'Networking',
-    'Workshop',
-    'General'
+    'Music',
+    'Art',
+    'Food',
+    'Science',
+    'Health'
 ];
 
 // ── Read Venue list ──────────────────────────────────────────
@@ -66,7 +66,7 @@ $venue_list = $stmt_venues->fetchAll(PDO::FETCH_COLUMN);
 $stmt_total = $pdo->prepare(
     "SELECT COUNT(*) FROM events 
      WHERE Event_Date >= CURDATE() AND Status = 'Approved'
-     AND Event_Category IN ('Technology', 'Business', 'Education', 'Health & Wellness', 'Arts & Culture', 'Sports', 'Networking', 'Workshop', 'General')"
+     AND Event_Category IN ('Tech', 'Business', 'Creative', 'Sports', 'Music', 'Art', 'Food', 'Science', 'Health')"
 );
 $stmt_total->execute();
 $total_upcoming = (int) $stmt_total->fetchColumn();
@@ -181,7 +181,7 @@ $total_upcoming = (int) $stmt_total->fetchColumn();
                     <div class="hero-search-box">
                         <i class="bi bi-search hero-search-icon"></i>
                         <input type="text" name="search" class="hero-search-input"
-                               placeholder="Search events by name, venue, or keyword…"
+                               placeholder="Search by event name, venue, city (e.g. Pune, Mumbai, Bangalore)…"
                                value="">
                         <button type="submit" class="btn btn-accent hero-search-btn">
                             <i class="bi bi-search me-1"></i>Search
@@ -364,15 +364,15 @@ $total_upcoming = (int) $stmt_total->fetchColumn();
 function getCategoryIcon($category) {
     $icons = [
         'All'               => '🌐',
-        'Technology'        => '💻',
+        'Tech'              => '💻',
         'Business'          => '💼',
-        'Education'         => '📚',
-        'Health & Wellness' => '🏥',
-        'Arts & Culture'    => '🎨',
+        'Creative'          => '💡',
         'Sports'            => '⚽',
-        'Networking'        => '🤝',
-        'Workshop'          => '🔧',
-        'General'           => '📌',
+        'Music'             => '🎵',
+        'Art'               => '🎨',
+        'Food'              => '🍛',
+        'Science'           => '🔬',
+        'Health'            => '🏥',
     ];
     return $icons[$category] ?? '📌';
 }
