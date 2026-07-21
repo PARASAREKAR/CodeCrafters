@@ -133,7 +133,11 @@ require_once 'includes/helpers.php';
                             <div class="p-4 text-center" style="background: rgba(255,255,255,0.02); border-radius: 16px; border: 1px solid var(--border);">
                                 <i class="bi bi-envelope-paper display-4 mb-3" style="color: var(--accent);"></i>
                                 <h5 class="fw-bold">Email Us</h5>
-                                <p class="text-muted mb-0">We will update the email address soon!</p>
+                                <p class="text-muted mb-0">
+                                    <a href="mailto:eventoraganizers2026@gmail.com" style="color: var(--text-secondary); text-decoration: none;">
+                                        eventoraganizers2026@gmail.com
+                                    </a>
+                                </p>
                             </div>
                         </div>
                         <div class="col-md-6">
