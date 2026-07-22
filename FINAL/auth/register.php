@@ -60,7 +60,7 @@ require_once '../includes/header.php';
             <?php endif; ?>
 
             <!-- ── Registration Form ── -->
-            <form action="auth_process.php" method="POST" novalidate>
+            <form action="auth_process.php" method="POST" enctype="multipart/form-data" novalidate>
                 <!-- CSRF Token -->
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8'); ?>">
                 <!-- Action Identifier -->
@@ -92,9 +92,10 @@ require_once '../includes/header.php';
                         <i class="bi bi-phone me-1"></i>Mobile Number
                     </label>
                     <input type="tel" class="form-control form-control-custom" id="mobile" name="mobile"
-                           placeholder="10–15 digit number" required
-                           pattern="[0-9]{10,15}"
-                           title="Enter a valid mobile number (10–15 digits)"
+                           placeholder="10 digit mobile number" required
+                           maxlength="10" minlength="10"
+                           pattern="[0-9]{10}"
+                           title="Enter a valid 10-digit mobile number"
                            value="<?php echo htmlspecialchars($_SESSION['form_data']['mobile'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                 </div>
 
@@ -105,7 +106,7 @@ require_once '../includes/header.php';
                     </label>
                     <div class="password-field-wrapper">
                         <input type="password" class="form-control form-control-custom" id="password" name="password"
-                               placeholder="Min 12 chars – mix upper, lower, digits & symbols" required minlength="12"
+                               placeholder="Min 8 chars – mix upper, lower, digits & symbols" required minlength="8"
                                autocomplete="new-password" style="padding-right: 2.8rem;">
                         <button type="button" class="password-toggle-btn" data-target="password" aria-label="Show password" tabindex="-1">
                             👁️
@@ -189,7 +190,7 @@ require_once '../includes/header.php';
                     </label>
                     <div class="password-field-wrapper">
                         <input type="password" class="form-control form-control-custom" id="confirm_password" name="confirm_password"
-                               placeholder="Re-enter your password" required minlength="12"
+                               placeholder="Re-enter your password" required minlength="8"
                                autocomplete="new-password" style="padding-right: 2.8rem;">
                         <button type="button" class="password-toggle-btn" data-target="confirm_password" aria-label="Show password" tabindex="-1">
                             👁️
@@ -199,7 +200,7 @@ require_once '../includes/header.php';
                 </div>
 
                 <!-- Role Selection -->
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="role" class="form-label" style="color: var(--text-secondary);">
                         <i class="bi bi-shield-check me-1"></i>Register As
                     </label>
@@ -211,6 +212,15 @@ require_once '../includes/header.php';
                             Organizer
                         </option>
                     </select>
+                </div>
+
+                <!-- Profile Picture (Optional) -->
+                <div class="mb-4">
+                    <label for="profile_pic" class="form-label" style="color: var(--text-secondary);">
+                        <i class="bi bi-image me-1"></i>Profile Picture (Optional)
+                    </label>
+                    <input type="file" class="form-control form-control-custom" id="profile_pic" name="profile_pic" accept="image/*">
+                    <div class="form-text text-muted small" style="font-size: 0.75rem;">Max: 2MB. JPG, PNG, GIF.</div>
                 </div>
 
                 <!-- Submit Button -->
