@@ -380,7 +380,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
                     <h5 class="footer-title">Contact Support</h5>
                     <p class="footer-desc">Need help? Get in touch with our team.</p>
                     <div class="footer-links mt-3">
-                        <li><a href="contact.php"><i class="bi bi-chat-dots me-2"></i>Support Center</a></li>
+                        <li><a href="javascript:void(0);" onclick="showSupportUnderProcess(event);"><i class="bi bi-chat-dots me-2"></i>Support Center</a></li>
                     </div>
                 </div>
             </div>

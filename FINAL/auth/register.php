@@ -133,7 +133,7 @@ require_once '../includes/header.php';
                         <ul class="password-req-list">
                             <li class="password-req-item" data-req="length">
                                 <span class="req-icon">✕</span>
-                                <span>12+ characters</span>
+                                <span>8+ characters</span>
                             </li>
                             <li class="password-req-item" data-req="uppercase">
                                 <span class="req-icon">✕</span>

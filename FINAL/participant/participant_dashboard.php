@@ -290,18 +290,37 @@ require_once '../includes/header.php';
                 $is_registered = ((int) $event['already_registered'] > 0);
             ?>
             <div class="col-md-6 col-xl-4">
-                <div class="card glass-card event-card-custom h-100 p-4 d-flex flex-column" style="border-radius: 20px;">
-                    <!-- Category Badge -->
-                    <div class="mb-2">
-                        <span class="badge bg-glass border text-muted px-2.5 py-1.5" style="border-radius: 8px; font-size: 0.75rem;">
-                            🎯 <?php echo htmlspecialchars($event['Event_Category'], ENT_QUOTES, 'UTF-8'); ?>
-                        </span>
+                <div class="card glass-card event-card-custom h-100 d-flex flex-column overflow-hidden" style="border-radius: 20px;">
+                    
+                    <!-- Event Banner Image -->
+                    <div style="height: 150px; width: 100%; overflow: hidden; position: relative;">
+                        <?php
+                        $imgPath = $event['Image_Path'] ?? '';
+                        $imgSrc = '';
+                        if (!empty($imgPath) && file_exists('../' . $imgPath)) {
+                            $imgSrc = '../' . htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8');
+                        } elseif (!empty($imgPath) && file_exists($imgPath)) {
+                            $imgSrc = htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8');
+                        } else {
+                            $placeholderId = (($index ?? 0) % 3) + 1;
+                            $imgSrc = '../assets/images/placeholder-' . $placeholderId . '.png';
+                        }
+                        ?>
+                        <img src="<?php echo $imgSrc; ?>" alt="Event Banner" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
                     </div>
 
-                    <!-- Event name -->
-                    <h5 class="fw-bold mb-2 text-primary" style="line-height: 1.4;">
-                        <?php echo htmlspecialchars($event['Event_Name'], ENT_QUOTES, 'UTF-8'); ?>
-                    </h5>
+                    <div class="p-4 d-flex flex-column flex-grow-1">
+                        <!-- Category Badge -->
+                        <div class="mb-2">
+                            <span class="badge bg-glass border text-muted px-2.5 py-1.5" style="border-radius: 8px; font-size: 0.75rem;">
+                                🎯 <?php echo htmlspecialchars($event['Event_Category'], ENT_QUOTES, 'UTF-8'); ?>
+                            </span>
+                        </div>
+
+                        <!-- Event name -->
+                        <h5 class="fw-bold mb-2 text-primary" style="line-height: 1.4;">
+                            <?php echo htmlspecialchars($event['Event_Name'], ENT_QUOTES, 'UTF-8'); ?>
+                        </h5>
 
                     <!-- Date & Venue -->
                     <p class="text-muted small mb-1">
@@ -342,6 +361,7 @@ require_once '../includes/header.php';
                             <i class="bi bi-pencil-square me-2"></i>Register Now
                         </a>
                     <?php endif; ?>
+                    </div>
                 </div>
             </div>
             <?php endforeach; ?>

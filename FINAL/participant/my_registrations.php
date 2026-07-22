@@ -150,6 +150,42 @@ require_once '../includes/header.php';
 
 </div><!-- /.fade-in -->
 
+<?php if (isset($_SESSION['registration_success_modal'])): ?>
+    <?php 
+        $modalData = $_SESSION['registration_success_modal'];
+        unset($_SESSION['registration_success_modal']);
+    ?>
+    <!-- Registration Success Modal -->
+    <div class="modal fade" id="regSuccessModal" tabindex="-1" aria-labelledby="regSuccessModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass-card border-0 text-center p-4" style="border-radius: 24px; background: var(--bg-card);">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <span style="font-size: 3.5rem;">🎉</span>
+                    </div>
+                    <h3 class="fw-bold text-accent mb-2" id="regSuccessModalLabel">Registration Successful!</h3>
+                    <p class="text-muted mb-3" style="font-size: 1.05rem;">
+                        You have successfully registered for <br><strong class="text-primary"><?php echo htmlspecialchars($modalData['event_name'] ?? 'the event', ENT_QUOTES, 'UTF-8'); ?></strong>.
+                    </p>
+                    <div class="p-3 mb-4 text-start rounded-3" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border);">
+                        <small class="text-muted d-block"><i class="bi bi-envelope-check-fill text-accent me-1"></i> <strong>Email Receipt Dispatched:</strong></small>
+                        <small class="text-secondary">A confirmation email has been sent to <strong><?php echo htmlspecialchars($modalData['user_email'] ?? '', ENT_QUOTES, 'UTF-8'); ?></strong>.</small>
+                    </div>
+                    <button type="button" class="btn btn-accent btn-lg w-100" data-bs-dismiss="modal">
+                        <i class="bi bi-check-circle me-1"></i>Got It
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var myModal = new bootstrap.Modal(document.getElementById('regSuccessModal'));
+            myModal.show();
+        });
+    </script>
+<?php endif; ?>
+
 <?php
 /* ── Footer ───────────────────────────────────────────────── */
 require_once '../includes/footer.php';

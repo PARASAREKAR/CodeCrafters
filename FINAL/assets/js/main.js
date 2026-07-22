@@ -145,7 +145,7 @@
     }
 
     return {
-      length:     pw.length >= 12,
+      length:     pw.length >= 8,
       uppercase:  /[A-Z]/.test(pw),
       lowercase:  /[a-z]/.test(pw),
       number:     /[0-9]/.test(pw),
@@ -358,7 +358,7 @@
           return;
         }
         if (!reqs.length) {
-          showError(field, 'Password must be at least 12 characters long.');
+          showError(field, 'Password must be at least 8 characters long.');
           isValid = false;
           return;
         }
@@ -713,3 +713,45 @@
   });
 
 })();
+
+/**
+ * Flash notification when Support Centre is clicked
+ */
+window.showSupportUnderProcess = function (e) {
+  if (e && e.preventDefault) e.preventDefault();
+
+  var existing = document.getElementById('support-process-toast');
+  if (existing) existing.remove();
+
+  var toast = document.createElement('div');
+  toast.id = 'support-process-toast';
+  toast.className = 'alert alert-info alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-4 shadow-lg border-0';
+  toast.style.zIndex = '999999';
+  toast.style.minWidth = '360px';
+  toast.style.borderRadius = '12px';
+  toast.style.background = 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)';
+  toast.style.color = '#ffffff';
+  toast.style.borderLeft = '5px solid #38bdf8';
+  toast.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.35)';
+
+  toast.innerHTML = `
+    <div class="d-flex align-items-center py-1">
+      <i class="bi bi-gear-wide-connected me-3 fs-3 text-info"></i>
+      <div class="pe-3">
+        <strong class="d-block text-white mb-1" style="font-size: 1.05rem;">Support Centre</strong>
+        <span class="text-light" style="font-size: 0.92rem;">Support Centre is currently under process.</span>
+      </div>
+      <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  `;
+
+  document.body.appendChild(toast);
+
+  setTimeout(function () {
+    if (toast && toast.parentNode) {
+      toast.classList.remove('show');
+      setTimeout(function () { if (toast.parentNode) toast.remove(); }, 300);
+    }
+  }, 4500);
+};
+

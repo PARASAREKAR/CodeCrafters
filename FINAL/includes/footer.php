@@ -46,6 +46,16 @@
     <!-- ============================================================ -->
     <!-- Modern Footer -->
     <!-- ============================================================ -->
+    <?php
+    $script_path = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+    $is_in_subdir = (
+        strpos($script_path, '/admin/') !== false ||
+        strpos($script_path, '/organizer/') !== false ||
+        strpos($script_path, '/participant/') !== false ||
+        strpos($script_path, '/auth/') !== false
+    );
+    $footer_base = $is_in_subdir ? '../' : '';
+    ?>
     <footer class="modern-footer mt-auto">
         <div class="container">
             <div class="row g-4 justify-content-between">
@@ -66,26 +76,25 @@
                         <?php if (isLoggedIn()): ?>
                             <?php $role = getUserRole(); ?>
                             <?php if ($role === 'Admin'): ?>
-                                <li><a href="../admin/admin_dashboard.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
-                                <li><a href="../admin/manage_users.php"><i class="bi bi-people me-2"></i>Manage Users</a></li>
-                                <li><a href="../admin/manage_requests.php"><i class="bi bi-check-circle me-2"></i>Manage Requests</a></li>
-                                <li><a href="../admin/reports.php"><i class="bi bi-file-earmark-bar-graph me-2"></i>System Reports</a></li>
+                                <li><a href="<?php echo $footer_base; ?>admin/admin_dashboard.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                                <li><a href="<?php echo $footer_base; ?>admin/manage_users.php"><i class="bi bi-people me-2"></i>Manage Users</a></li>
+                                <li><a href="<?php echo $footer_base; ?>admin/view_messages.php"><i class="bi bi-envelope me-2"></i>Support Inbox</a></li>
                             <?php elseif ($role === 'Organizer'): ?>
-                                <li><a href="../organizer/organizer_dashboard.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
-                                <li><a href="../organizer/create_event.php"><i class="bi bi-plus-circle me-2"></i>Create Event</a></li>
-                                <li><a href="../organizer/reports.php"><i class="bi bi-file-earmark-bar-graph me-2"></i>Event Reports</a></li>
+                                <li><a href="<?php echo $footer_base; ?>organizer/organizer_dashboard.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                                <li><a href="<?php echo $footer_base; ?>organizer/create_event.php"><i class="bi bi-plus-circle me-2"></i>Create Event</a></li>
                             <?php elseif ($role === 'Participant'): ?>
-                                <li><a href="../participant/participant_dashboard.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
-                                <li><a href="../participant/browse_events.php"><i class="bi bi-search me-2"></i>Browse Events</a></li>
-                                <li><a href="../participant/my_registrations.php"><i class="bi bi-journal-check me-2"></i>My Registrations</a></li>
+                                <li><a href="<?php echo $footer_base; ?>participant/participant_dashboard.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                                <li><a href="<?php echo $footer_base; ?>participant/browse_events.php"><i class="bi bi-search me-2"></i>Browse Events</a></li>
+                                <li><a href="<?php echo $footer_base; ?>participant/my_registrations.php"><i class="bi bi-journal-check me-2"></i>My Registrations</a></li>
                             <?php endif; ?>
-                            <li><a href="../auth/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                            <li><a href="javascript:void(0);" onclick="showSupportUnderProcess(event);"><i class="bi bi-chat-dots me-2"></i>Support Center</a></li>
+                            <li><a href="<?php echo $footer_base; ?>auth/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                         <?php else: ?>
-                            <li><a href="../index.php"><i class="bi bi-house me-2"></i>Home</a></li>
-                            <li><a href="../about.php"><i class="bi bi-info-circle me-2"></i>About Us</a></li>
-                            <li><a href="../contact.php"><i class="bi bi-envelope me-2"></i>Contact Us</a></li>
-                            <li><a href="../auth/login.php"><i class="bi bi-box-arrow-in-right me-2"></i>Login</a></li>
-                            <li><a href="../auth/register.php"><i class="bi bi-person-plus me-2"></i>Register</a></li>
+                            <li><a href="<?php echo $footer_base; ?>index.php"><i class="bi bi-house me-2"></i>Home</a></li>
+                            <li><a href="<?php echo $footer_base; ?>about.php"><i class="bi bi-info-circle me-2"></i>About Us</a></li>
+                            <li><a href="<?php echo $footer_base; ?>contact.php"><i class="bi bi-envelope me-2"></i>Contact Us</a></li>
+                            <li><a href="<?php echo $footer_base; ?>auth/login.php"><i class="bi bi-box-arrow-in-right me-2"></i>Login</a></li>
+                            <li><a href="<?php echo $footer_base; ?>auth/register.php"><i class="bi bi-person-plus me-2"></i>Register</a></li>
                         <?php endif; ?>
                     </ul>
                 </div>
@@ -93,7 +102,7 @@
                     <h5 class="footer-title">Contact Support</h5>
                     <p class="footer-desc">Need help? Get in touch with our team.</p>
                     <div class="footer-links mt-3">
-                        <li><a href="../contact.php"><i class="bi bi-chat-dots me-2"></i>Support Center</a></li>
+                        <li><a href="javascript:void(0);" onclick="showSupportUnderProcess(event);"><i class="bi bi-chat-dots me-2"></i>Support Center</a></li>
                     </div>
                 </div>
             </div>
@@ -124,6 +133,33 @@
     </script>
 
     <!-- Custom JavaScript -->
-    <script src="../assets/js/main.js"></script>
+    <script src="<?php echo $footer_base; ?>assets/js/main.js"></script>
+    <script>
+    if (typeof window.showSupportUnderProcess === 'undefined') {
+        window.showSupportUnderProcess = function(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            var existing = document.getElementById('support-process-toast');
+            if (existing) existing.remove();
+            var toast = document.createElement('div');
+            toast.id = 'support-process-toast';
+            toast.className = 'alert alert-info alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-4 shadow-lg border-0';
+            toast.style.zIndex = '999999';
+            toast.style.minWidth = '360px';
+            toast.style.borderRadius = '12px';
+            toast.style.background = 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)';
+            toast.style.color = '#ffffff';
+            toast.style.borderLeft = '5px solid #38bdf8';
+            toast.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.35)';
+            toast.innerHTML = '<div class="d-flex align-items-center py-1"><i class="bi bi-gear-wide-connected me-3 fs-3 text-info"></i><div class="pe-3"><strong class="d-block text-white mb-1" style="font-size: 1.05rem;">Support Centre</strong><span class="text-light" style="font-size: 0.92rem;">Support Centre is currently under process.</span></div><button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="alert" aria-label="Close"></button></div>';
+            document.body.appendChild(toast);
+            setTimeout(function() {
+                if (toast && toast.parentNode) {
+                    toast.classList.remove('show');
+                    setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+                }
+            }, 4500);
+        };
+    }
+    </script>
 </body>
 </html>
