@@ -245,6 +245,64 @@ if ($action === 'register') {
         // Clear preserved form data on success
         unset($_SESSION['form_data']);
 
+        $mail = new PHPMailer(true);
+
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'eventoraganizers2026@gmail.com';
+            $mail->Password = 'gdtfdzdcubqpenyq';
+
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            $mail->setFrom('eventoraganizers2026@gmail.com', 'Event Registration System');
+            $mail->addAddress($email, $name);
+
+            $mail->isHTML(true);
+            $mail->Subject = 'Welcome to Event Registration System 🎉';
+
+            $mail->Body = "
+            <div style='font-family:Arial,sans-serif;line-height:1.7;color:#333;'>
+
+                <h2 style='color:#0d6efd;'>Welcome, {$name}! 🎉</h2>
+
+                <p>Your account has been created successfully.</p>
+
+                <hr>
+
+                <h3>Account Details</h3>
+
+                <p><b>Name:</b> {$name}</p>
+                <p><b>Email:</b> {$email}</p>
+                <p><b>Role:</b> {$role}</p>
+
+                <hr>
+
+                <p>You can now log in and start using the Event Registration System.</p>
+
+                <p style='color:green;font-weight:bold;'>
+                ✅ Registration Successful
+                </p>
+
+                <br>
+
+                <p>
+                Regards,<br>
+                <b>Event Registration System Team</b><br>
+                eventoraganizers2026@gmail.com
+                </p>
+
+            </div>
+            ";
+
+            $mail->send();
+
+        }catch (Exception $e) {
+             die("Registration Mail Error: " . $mail->ErrorInfo);
+        }
+
         flashRedirect('Registration successful! You can now log in.', 'success', 'login.php');
 
     } catch (PDOException $e) {
