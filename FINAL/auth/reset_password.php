@@ -8,6 +8,12 @@ session_start();
 
 require_once '../config/db_connect.php';
 require_once '../includes/helpers.php';
+require_once '../src/PHPMailer.php';
+require_once '../src/SMTP.php';
+require_once '../src/Exception.php';
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 // ============================================================
 // Allow access only after successful OTP verification
@@ -70,6 +76,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':password' => $hashedPassword,
             ':id'       => $_SESSION['reset_user']['User_ID']
         ]);
+        // ============================================================
+        // Send Password Changed Confirmation Email
+        // ============================================================
+
+        $mail = new PHPMailer(true);
+
+        try {
+
+            // SMTP Configuration
+
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'eventoraganizers2026@gmail.com';
+            $mail->Password = 'gdtfdzdcubqpenyq';
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            // Sender & Receiver
+            $mail->setFrom(
+                'eventoraganizers2026@gmail.com',
+                'Event Registration System'
+            );
+
+            $mail->addAddress(
+                $_SESSION['reset_user']['Email'],
+                $_SESSION['reset_user']['Name']
+            );
+
+            // Email Content
+            $mail->isHTML(true);
+            $mail->Subject = 'Password Changed Successfully';
+
+            $mail->Body = "
+                <h2>Password Updated Successfully</h2>
+
+                <p>Hello <b>{$_SESSION['reset_user']['Name']}</b>,</p>
+
+                <p>Your account password has been changed successfully.</p>
+
+                <p>If you did not make this change, please contact the administrator immediately.</p>
+
+                <br>
+
+                <p>Regards,<br>
+                <b>Event Registration System</b></p>
+            ";
+
+            $mail->send();
+
+        } catch (Exception $e) {
+
+            // Log email error but continue password reset process
+            error_log('Password Changed Mail Error: ' . $mail->ErrorInfo);
+
+        }
 
         // Clear reset session
         unset(
