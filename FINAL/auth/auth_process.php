@@ -271,14 +271,19 @@ elseif ($action === 'login') {
     // 4. Look up the user by email
     try {
         $stmt = $pdo->prepare(
-            'SELECT User_ID, Name, Email, Password, Role, Account_Status, Profile_Pic FROM users WHERE Email = :email LIMIT 1'
+            'SELECT User_ID, Name, Email, Password, Role, Account_Status FROM users WHERE Email = :email LIMIT 1'
         );
         $stmt->execute([':email' => $email]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-     } catch (PDOException $e) {
+    } catch (PDOException $e) {
         error_log('Login query error: ' . $e->getMessage());
-        flashRedirect('Something went wrong. Please try again later.', 'danger', 'login.php');
-     }
+
+        flashRedirect(
+            'Something went wrong. Please try again later.',
+            'danger',
+            'login.php'
+        );
+    }
 
     // 5. Verify password
     if (!$user || !password_verify($password, $user['Password'])) {

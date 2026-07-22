@@ -62,19 +62,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
                 $mailSender->addAddress($sender_email, $sender_name);
 
                 $mailSender->isHTML(true);
-                $mailSender->Subject = "Contact Receipt: " . $sender_subject;
+                $mailSender->Subject = "Your Message Has Been Received | Event Registration System";
                 $mailSender->Body = "
-                    <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
-                        <h2 style='color: #0d6efd;'>Dear {$sender_name},</h2>
-                        <p>Thank you for contacting EventHub! Your message has been recorded successfully.</p>
-                        <hr style='border: 0; border-top: 1px solid #eee;'>
-                        <p><b>Subject:</b> {$sender_subject}</p>
-                        <p><b>Message:</b><br>" . nl2br($sender_message) . "</p>
-                        <hr style='border: 0; border-top: 1px solid #eee;'>
-                        <p>Our support team is reviewing your inquiry and will send a formal reply to this email address within 24-48 business hours.</p>
-                        <br>
-                        <p>Best regards,<br><b>EventHub Support Team</b><br>eventoraganizers2026@gmail.com</p>
-                    </div>
+                <div style='font-family: Arial, sans-serif; line-height: 1.7; color: #333;'>
+
+                     <h2 style='color:#0d6efd;'>Hello {$sender_name},</h2>
+
+                     <p>Thank you for contacting the <b>Event Registration System</b>.</p>
+
+                     <p>✅ <b>Your message has been sent successfully.</b></p>
+
+                     <p>We have received your inquiry and our support team will review it shortly.</p>
+
+                     <hr style='border:0; border-top:1px solid #ddd;'>
+
+                     <h3>Your Submitted Details</h3>
+
+                     <p><b>Subject:</b> {$sender_subject}</p>
+
+                     <p><b>Message:</b><br>" . nl2br($sender_message) . "</p>
+
+                     <hr style='border:0; border-top:1px solid #ddd;'>
+
+                     <p>If you have any additional questions, simply reply to this email.</p>
+
+                     <p>We appreciate your interest in our Event Registration System.</p>
+
+                     <br>
+
+                     <p>
+                         Regards,<br>
+                         <b>Event Registration System Team</b><br>
+                         📧 eventoraganizers2026@gmail.com
+                     </p>
+
+                </div>
                 ";
                 $mailSender->send();
             } catch (Exception $e) {
