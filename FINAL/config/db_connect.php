@@ -14,7 +14,7 @@ $db_user = 'root';
 $db_pass = '';
 
 // DSN with utf8mb4 charset
-$dsn = "mysql:host={$db_host};dbname={$db_name};charset=utf8mb4";
+$dsn = "mysql:host={$db_host};port=3307;dbname={$db_name};charset=utf8mb4";
 
 // PDO connection options
 $options = [

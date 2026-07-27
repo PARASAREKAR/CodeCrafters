@@ -223,6 +223,14 @@ require_once '../includes/header.php';
                     <div class="form-text text-muted small" style="font-size: 0.75rem;">Max: 2MB. JPG, PNG, GIF.</div>
                 </div>
 
+                <!-- Terms Agreement Notice -->
+                <div class="mb-3 text-center">
+                    <small style="color: var(--text-secondary); font-size: 0.8rem;">
+                        By creating an account, you agree to EventHub's 
+                        <a href="../terms.php" target="_blank" style="color: var(--accent); text-decoration: underline;">Terms & Conditions</a>.
+                    </small>
+                </div>
+
                 <!-- Submit Button -->
                 <div class="d-grid">
                     <button type="submit" class="btn btn-accent btn-lg">

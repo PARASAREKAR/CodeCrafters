@@ -519,6 +519,7 @@ $category_counts['Live Now'] = $live_count;
                         <li><a href="browse_events.php"><i class="bi bi-search me-2"></i>Browse Events</a></li>
                         <li><a href="about.php"><i class="bi bi-info-circle me-2"></i>About Us</a></li>
                         <li><a href="contact.php"><i class="bi bi-envelope me-2"></i>Contact Us</a></li>
+                        <li><a href="terms.php"><i class="bi bi-file-earmark-text me-2"></i>Terms & Conditions</a></li>
                         <?php if (isLoggedIn()): ?>
                             <li><a href="auth/login.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
                         <?php else: ?>
@@ -539,7 +540,7 @@ $category_counts['Live Now'] = $live_count;
                 <span>&copy; 2026 EventHub. All rights reserved.</span>
                 <div>
                     <a href="#" class="text-muted text-decoration-none me-3">Privacy Policy</a>
-                    <a href="#" class="text-muted text-decoration-none">Terms of Service</a>
+                    <a href="terms.php" class="text-muted text-decoration-none">Terms of Service</a>
                 </div>
             </div>
         </div>

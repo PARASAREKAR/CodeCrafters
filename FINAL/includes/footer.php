@@ -110,7 +110,7 @@
                 <span>&copy; 2026 EventHub. All rights reserved.</span>
                 <div>
                     <a href="#" class="text-muted text-decoration-none me-3">Privacy Policy</a>
-                    <a href="#" class="text-muted text-decoration-none">Terms of Service</a>
+                    <a href="<?php echo $footer_base; ?>terms.php" class="text-muted text-decoration-none">Terms of Service</a>
                 </div>
             </div>
         </div>

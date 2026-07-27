@@ -368,6 +368,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
                         <li><a href="index.php"><i class="bi bi-house me-2"></i>Home</a></li>
                         <li><a href="about.php"><i class="bi bi-info-circle me-2"></i>About Us</a></li>
                         <li><a href="contact.php"><i class="bi bi-envelope me-2"></i>Contact Us</a></li>
+                        <li><a href="terms.php"><i class="bi bi-file-earmark-text me-2"></i>Terms & Conditions</a></li>
                         <?php if (isLoggedIn()): ?>
                             <li><a href="auth/login.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
                         <?php else: ?>
@@ -388,7 +389,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
                 <span>&copy; 2026 EventHub. All rights reserved.</span>
                 <div>
                     <a href="#" class="text-muted text-decoration-none me-3">Privacy Policy</a>
-                    <a href="#" class="text-muted text-decoration-none">Terms of Service</a>
+                    <a href="terms.php" class="text-muted text-decoration-none">Terms of Service</a>
                 </div>
             </div>
         </div>

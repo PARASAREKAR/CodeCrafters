@@ -1,3 +1,4 @@
+SET FOREIGN_KEY_CHECKS = 0;
 -- ============================================================
 -- EventHub Complete Database Schema & Initial Data Export
 -- Generated: 2026-07-22 19:36:46
@@ -19,7 +20,7 @@ CREATE TABLE `attendance` (
   PRIMARY KEY (`Attendance_ID`),
   KEY `Registration_ID` (`Registration_ID`),
   CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`Registration_ID`) REFERENCES `registrations` (`Registration_ID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 -- Table structure for `contact_messages`
@@ -33,7 +34,7 @@ CREATE TABLE `contact_messages` (
   `message` text NOT NULL,
   `submitted_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data dumping for table `contact_messages`
 INSERT INTO `contact_messages` (`id`, `name`, `email`, `subject`, `message`, `submitted_at`) VALUES ('1', 'Parth S. Tupe', 'allogins.work@gmail.com', 'Review of EventHub', 'Your website is very nice.', '2026-07-21 09:58:32');
@@ -66,7 +67,7 @@ CREATE TABLE `events` (
   KEY `created_by` (`created_by`),
   KEY `idx_event_category` (`Event_Category`),
   CONSTRAINT `events_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`User_ID`) ON DELETE SET NULL
-) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data dumping for table `events`
 INSERT INTO `events` (`Event_ID`, `Event_Name`, `Description`, `Venue`, `Event_Date`, `Event_Time`, `Organizer`, `Capacity`, `Event_Category`, `Image_Path`, `Status`, `created_by`, `created_at`) VALUES ('1', 'Bengaluru Tech Summit 2026', 'India\'s flagship technology event focusing on AI, Biotech, Startup ecosystems, and Deep Tech innovations.', 'Bangalore Palace, Bengaluru, Karnataka', '2026-07-22', '09:30:00', 'Admin', '1500', 'Tech', 'assets/images/placeholder-1.png', 'Approved', '1', '2026-07-21 23:30:36');
@@ -141,7 +142,7 @@ CREATE TABLE `registrations` (
   KEY `idx_status` (`Status`),
   CONSTRAINT `registrations_ibfk_1` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`) ON DELETE CASCADE,
   CONSTRAINT `registrations_ibfk_2` FOREIGN KEY (`Event_ID`) REFERENCES `events` (`Event_ID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data dumping for table `registrations`
 INSERT INTO `registrations` (`Registration_ID`, `User_ID`, `Event_ID`, `Registration_Date`, `Status`, `College_Organization`, `created_at`) VALUES ('1', '32', '3', '2026-07-22', 'Confirmed', 'Zeal College of Engineering and Research', '2026-07-22 09:27:43');
@@ -166,7 +167,7 @@ CREATE TABLE `users` (
   UNIQUE KEY `Email` (`Email`),
   KEY `idx_email` (`Email`),
   KEY `idx_role` (`Role`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Data dumping for table `users`
 INSERT INTO `users` (`User_ID`, `Name`, `Email`, `Mobile`, `Profile_Pic`, `Password`, `Role`, `Account_Status`, `created_at`) VALUES ('1', 'Admin', 'admin@eventreg.com', '9999999999', NULL, '$2y$10$zT57.RJNRMcASH3Ig7szAeQVeDpxVhT5dCIK8sBgp8jHDEomC6oE6', 'Admin', 'Approved', '2026-07-15 17:46:45');
@@ -180,3 +181,5 @@ INSERT INTO `users` (`User_ID`, `Name`, `Email`, `Mobile`, `Profile_Pic`, `Passw
 INSERT INTO `users` (`User_ID`, `Name`, `Email`, `Mobile`, `Profile_Pic`, `Password`, `Role`, `Account_Status`, `created_at`) VALUES ('34', 'Prafull Bugadikattekar', 'prafullbugadikattekar@gmail.com', '5555555555', NULL, '$2y$10$ReDNALfjfUGijl/bdeoNkOjvK.1UtGBAjEzuLqAq5DiRRsMeu8MV6', 'Organizer', 'Approved', '2026-07-22 10:59:43');
 INSERT INTO `users` (`User_ID`, `Name`, `Email`, `Mobile`, `Profile_Pic`, `Password`, `Role`, `Account_Status`, `created_at`) VALUES ('35', 'Santosh Tupe', 'santoshtupe.bni@gmail.com', '9619633375', NULL, '$2y$10$u.23r/aQ4fmDLbaZ0USV0OzAAbidOsNRRIXncUhXKvEZky3WaQY0i', 'Participant', 'Approved', '2026-07-22 22:18:47');
 
+
+SET FOREIGN_KEY_CHECKS = 1;

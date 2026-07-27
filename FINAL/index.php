@@ -314,6 +314,7 @@ $total_upcoming = (int) $stmt_total->fetchColumn();
                         <li><a href="index.php"><i class="bi bi-house me-2"></i>Home</a></li>
                         <li><a href="about.php"><i class="bi bi-info-circle me-2"></i>About Us</a></li>
                         <li><a href="contact.php"><i class="bi bi-envelope me-2"></i>Contact Us</a></li>
+                        <li><a href="terms.php"><i class="bi bi-file-earmark-text me-2"></i>Terms & Conditions</a></li>
                         <li><a href="auth/login.php"><i class="bi bi-box-arrow-in-right me-2"></i>Login</a></li>
                         <li><a href="auth/register.php"><i class="bi bi-person-plus me-2"></i>Register</a></li>
                     </ul>
@@ -330,7 +331,7 @@ $total_upcoming = (int) $stmt_total->fetchColumn();
                 <span>&copy; 2026 EventHub. All rights reserved.</span>
                 <div>
                     <a href="#" class="text-muted text-decoration-none me-3">Privacy Policy</a>
-                    <a href="#" class="text-muted text-decoration-none">Terms of Service</a>
+                    <a href="terms.php" class="text-muted text-decoration-none">Terms of Service</a>
                 </div>
             </div>
         </div>
