@@ -165,9 +165,14 @@ require_once '../includes/header.php';
         <div class="card glass-card" style="background: var(--bg-card);">
             <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Event-wise Registration Report</h5>
-                <button class="btn btn-sm btn-outline-secondary" onclick="window.print();">
-                    🖨️ Print
-                </button>
+                <div class="d-flex gap-2">
+                    <a href="export_reports.php?type=event_wise" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
+                    </a>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="window.print();">
+                        🖨️ Print
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <?php if (empty($eventReport)): ?>
@@ -244,9 +249,14 @@ require_once '../includes/header.php';
         <div class="card glass-card" style="background: var(--bg-card);">
             <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Participant Details Report</h5>
-                <button class="btn btn-sm btn-outline-secondary" onclick="window.print();">
-                    🖨️ Print
-                </button>
+                <div class="d-flex gap-2">
+                    <a href="export_reports.php?type=participant_details" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
+                    </a>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="window.print();">
+                        🖨️ Print
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <?php if (empty($participantReport)): ?>
@@ -304,9 +314,14 @@ require_once '../includes/header.php';
         <div class="card glass-card" style="background: var(--bg-card);">
             <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Attendance Report</h5>
-                <button class="btn btn-sm btn-outline-secondary" onclick="window.print();">
-                    🖨️ Print
-                </button>
+                <div class="d-flex gap-2">
+                    <a href="export_reports.php?type=attendance" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
+                    </a>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="window.print();">
+                        🖨️ Print
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <!-- Summary Stats -->
@@ -398,9 +413,14 @@ require_once '../includes/header.php';
         <div class="card glass-card" style="background: var(--bg-card);">
             <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Cancelled Registrations Report</h5>
-                <button class="btn btn-sm btn-outline-secondary" onclick="window.print();">
-                    🖨️ Print
-                </button>
+                <div class="d-flex gap-2">
+                    <a href="export_reports.php?type=cancelled_registrations" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
+                    </a>
+                    <button class="btn btn-sm btn-outline-secondary" onclick="window.print();">
+                        🖨️ Print
+                    </button>
+                </div>
             </div>
             <div class="card-body">
                 <?php if (empty($cancelledReport)): ?>
@@ -469,9 +489,9 @@ require_once '../includes/header.php';
         .navbar, .footer-custom, .nav-tabs, .btn, .search-wrapper {
             display: none !important;
         }
-        .tab-pane {
-            display: block !important;
-            opacity: 1 !important;
+        /* Only show the active tab when printing */
+        .tab-pane:not(.active) {
+            display: none !important;
         }
         .card {
             border: 1px solid #ddd !important;

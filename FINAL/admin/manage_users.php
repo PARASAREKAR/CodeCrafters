@@ -180,8 +180,8 @@ require_once '../includes/header.php';
      ============================================================ -->
 <ul class="nav nav-tabs mb-4" id="userTabs" role="tablist" data-aos="fade-up">
     <li class="nav-item" role="presentation">
-        <button class="nav-link active fw-bold" id="participants-tab" data-bs-toggle="tab" data-bs-target="#participants" type="button" role="tab" aria-controls="participants" aria-selected="true">
-            <i class="bi bi-person me-1"></i>Participants <span class="badge bg-accent-light text-accent ms-1"><?php echo count($participants); ?></span>
+        <button class="nav-link active fw-bold" id="admins-tab" data-bs-toggle="tab" data-bs-target="#admins" type="button" role="tab" aria-controls="admins" aria-selected="true">
+            <i class="bi bi-shield-lock me-1"></i>Admins <span class="badge bg-accent-light text-accent ms-1"><?php echo count($admins); ?></span>
         </button>
     </li>
     <li class="nav-item" role="presentation">
@@ -190,8 +190,8 @@ require_once '../includes/header.php';
         </button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link fw-bold" id="admins-tab" data-bs-toggle="tab" data-bs-target="#admins" type="button" role="tab" aria-controls="admins" aria-selected="false">
-            <i class="bi bi-shield-lock me-1"></i>Admins <span class="badge bg-accent-light text-accent ms-1"><?php echo count($admins); ?></span>
+        <button class="nav-link fw-bold" id="participants-tab" data-bs-toggle="tab" data-bs-target="#participants" type="button" role="tab" aria-controls="participants" aria-selected="false">
+            <i class="bi bi-person me-1"></i>Participants <span class="badge bg-accent-light text-accent ms-1"><?php echo count($participants); ?></span>
         </button>
     </li>
 </ul>
@@ -199,7 +199,7 @@ require_once '../includes/header.php';
 <div class="tab-content" id="userTabsContent" data-aos="fade-up" data-aos-delay="100">
     
     <!-- Participants Tab -->
-    <div class="tab-pane fade show active" id="participants" role="tabpanel" aria-labelledby="participants-tab">
+    <div class="tab-pane fade" id="participants" role="tabpanel" aria-labelledby="participants-tab">
         <div class="card glass-card">
             <div class="card-body p-0">
                 <?php if (empty($participants)): ?>
@@ -349,7 +349,7 @@ require_once '../includes/header.php';
     </div>
 
     <!-- Admins Tab -->
-    <div class="tab-pane fade" id="admins" role="tabpanel" aria-labelledby="admins-tab">
+    <div class="tab-pane fade show active" id="admins" role="tabpanel" aria-labelledby="admins-tab">
         <div class="card glass-card">
             <div class="card-body p-0">
                 <?php if (empty($admins)): ?>

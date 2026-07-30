@@ -248,23 +248,35 @@ require_once '../includes/header.php';
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
                 <h5 class="fw-bold mb-0"><i class="bi bi-table me-2 text-accent"></i>My Event Catalog</h5>
                 
-                <div class="d-flex gap-2 align-items-center">
-                    <select id="filterCategory" class="form-select form-select-sm form-control-custom" style="width: auto;">
-                        <option value="all">All Categories</option>
-                        <?php 
-                        $cats = array_unique(array_column($events, 'Event_Category'));
-                        foreach($cats as $c) echo "<option value='".htmlspecialchars($c, ENT_QUOTES, 'UTF-8')."'>".htmlspecialchars($c, ENT_QUOTES, 'UTF-8')."</option>";
-                        ?>
-                    </select>
-                    <select id="filterFee" class="form-select form-select-sm form-control-custom" style="width: auto;">
-                        <option value="all">All Types</option>
-                        <option value="paid">Paid</option>
-                        <option value="free">Free</option>
-                    </select>
-                    
-                    <span class="badge bg-accent-light text-accent px-3 py-2 ms-2" style="border-radius: 12px; font-weight: 600;" id="eventCountBadge">
-                        <?php echo count($events); ?> events
-                    </span>
+                <div class="row g-2 align-items-center ms-auto">
+                    <div class="col-12 col-md-auto">
+                        <div class="input-group input-group-sm w-100">
+                            <span class="input-group-text bg-transparent border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                            <input type="text" id="searchEvent" class="form-control form-control-custom border-start-0" placeholder="Search events..." style="border-left: none;">
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-auto">
+                        <select id="filterCategory" class="form-select form-select-sm form-control-custom w-100">
+                            <option value="all">All Categories</option>
+                            <?php 
+                            $cats = array_unique(array_column($events, 'Event_Category'));
+                            foreach($cats as $c) echo "<option value='".htmlspecialchars($c, ENT_QUOTES, 'UTF-8')."'>".htmlspecialchars($c, ENT_QUOTES, 'UTF-8')."</option>";
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-auto">
+                        <select id="filterFee" class="form-select form-select-sm form-control-custom w-100">
+                            <option value="all">All Types</option>
+                            <option value="registered">Registered</option>
+                            <option value="paid">Paid</option>
+                            <option value="free">Free</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-auto text-end text-md-start">
+                        <span class="badge bg-accent-light text-accent px-3 py-2" style="border-radius: 12px; font-weight: 600;" id="eventCountBadge">
+                            <?php echo count($events); ?> events
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -296,25 +308,27 @@ require_once '../includes/header.php';
                                 $isPaid = ((float)$event['Event_Fee'] > 0) ? 'paid' : 'free';
                                 $catClean = htmlspecialchars($event['Event_Category'], ENT_QUOTES, 'UTF-8');
                             ?>
-                                <tr class="table-custom-row catalog-row" data-category="<?php echo $catClean; ?>" data-fee="<?php echo $isPaid; ?>">
+                                <tr class="table-custom-row catalog-row" data-category="<?php echo $catClean; ?>" data-fee="<?php echo $isPaid; ?>" data-registered="<?php echo ((int)$event['reg_count'] > 0) ? 'true' : 'false'; ?>">
                                     <td class="ps-4 font-monospace text-muted"><?php echo $index + 1; ?></td>
-                                    <td class="fw-semibold d-flex align-items-center gap-3">
-                                        <?php
-                                        $event_cat = $event['Event_Category'] ?? 'General';
-                                        $imgPath = $event['Image_Path'] ?? '';
-                                        $imgSrc = '';
-                                        if (!empty($imgPath) && file_exists('../' . $imgPath)) {
-                                            $imgSrc = '../' . htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8');
-                                        } elseif (!empty($imgPath) && file_exists($imgPath)) {
-                                            $imgSrc = htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8');
-                                        } else {
-                                            $imgSrc = htmlspecialchars(getCategoryImage($event_cat, '../'), ENT_QUOTES, 'UTF-8');
-                                        }
-                                        ?>
-                                        <div style="width: 48px; height: 48px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
-                                            <img src="<?php echo $imgSrc; ?>" alt="Event Thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
+                                    <td class="fw-semibold">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <?php
+                                            $event_cat = $event['Event_Category'] ?? 'General';
+                                            $imgPath = $event['Image_Path'] ?? '';
+                                            $imgSrc = '';
+                                            if (!empty($imgPath) && file_exists('../' . $imgPath)) {
+                                                $imgSrc = '../' . htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8');
+                                            } elseif (!empty($imgPath) && file_exists($imgPath)) {
+                                                $imgSrc = htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8');
+                                            } else {
+                                                $imgSrc = htmlspecialchars(getCategoryImage($event_cat, '../'), ENT_QUOTES, 'UTF-8');
+                                            }
+                                            ?>
+                                            <div style="width: 48px; height: 48px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+                                                <img src="<?php echo $imgSrc; ?>" alt="Event Thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
+                                            </div>
+                                            <span style="min-width: 150px;"><?php echo htmlspecialchars($event['Event_Name'], ENT_QUOTES, 'UTF-8'); ?></span>
                                         </div>
-                                        <span><?php echo htmlspecialchars($event['Event_Name'], ENT_QUOTES, 'UTF-8'); ?></span>
                                     </td>
                                     <td>
                                         <span class="badge bg-glass border text-muted px-2 py-1.5" style="border-radius: 6px;">
@@ -337,29 +351,31 @@ require_once '../includes/header.php';
                                         </span>
                                     </td>
                                     <td class="pe-4 text-end">
-                                        <!-- View -->
-                                        <a href="view_event.php?event_id=<?php echo (int) $event['Event_ID']; ?>"
-                                           class="btn btn-sm btn-outline-accent me-1" title="View details">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <!-- Edit -->
-                                        <a href="edit_event.php?event_id=<?php echo (int) $event['Event_ID']; ?>"
-                                           class="btn btn-sm btn-outline-warning me-1" title="Edit details">
-                                            <i class="bi bi-pencil-square"></i>
-                                        </a>
-                                        <!-- Delete Event -->
-                                        <form action="delete_event.php" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this event? This will delete all registrations related to it.');">
-                                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
-                                            <input type="hidden" name="event_id" value="<?php echo (int) $event['Event_ID']; ?>">
-                                            <button type="submit" class="btn btn-sm btn-outline-danger me-1" title="Delete event">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                        <!-- Manage Participants -->
-                                        <a href="manage_participants.php?event_id=<?php echo (int) $event['Event_ID']; ?>"
-                                           class="btn btn-sm btn-accent" title="Manage registrations and attendance">
-                                            <i class="bi bi-person-lines-fill"></i>
-                                        </a>
+                                        <div class="d-flex justify-content-end align-items-center gap-2 flex-wrap">
+                                            <!-- View -->
+                                            <a href="view_event.php?event_id=<?php echo (int) $event['Event_ID']; ?>"
+                                               class="btn btn-sm btn-outline-accent" title="View details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <!-- Edit -->
+                                            <a href="edit_event.php?event_id=<?php echo (int) $event['Event_ID']; ?>"
+                                               class="btn btn-sm btn-outline-warning" title="Edit details">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <!-- Delete Event -->
+                                            <form action="delete_event.php" method="POST" class="d-inline m-0" onsubmit="return confirm('Are you sure you want to delete this event? This will delete all registrations related to it.');">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
+                                                <input type="hidden" name="event_id" value="<?php echo (int) $event['Event_ID']; ?>">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete event">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                            <!-- Manage Participants -->
+                                            <a href="manage_participants.php?event_id=<?php echo (int) $event['Event_ID']; ?>"
+                                               class="btn btn-sm btn-accent" title="Manage registrations and attendance">
+                                                <i class="bi bi-person-lines-fill"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -470,12 +486,14 @@ document.addEventListener("DOMContentLoaded", function() {
     // ── Table Filtering Logic ──────────────────────────
     const filterCategory = document.getElementById('filterCategory');
     const filterFee = document.getElementById('filterFee');
+    const searchEvent = document.getElementById('searchEvent');
     const rows = document.querySelectorAll('.catalog-row');
     const countBadge = document.getElementById('eventCountBadge');
     
     function applyFilters() {
         const catValue = filterCategory ? filterCategory.value : 'all';
         const feeValue = filterFee ? filterFee.value : 'all';
+        const searchValue = searchEvent ? searchEvent.value.toLowerCase() : '';
         let visibleCount = 0;
         
         rows.forEach(row => {
@@ -483,9 +501,17 @@ document.addEventListener("DOMContentLoaded", function() {
             const rowFee = row.getAttribute('data-fee');
             
             const matchCat = (catValue === 'all' || rowCat === catValue);
-            const matchFee = (feeValue === 'all' || rowFee === feeValue);
             
-            if (matchCat && matchFee) {
+            let matchFee = false;
+            if (feeValue === 'registered') {
+                matchFee = (row.getAttribute('data-registered') === 'true');
+            } else {
+                matchFee = (feeValue === 'all' || rowFee === feeValue);
+            }
+            
+            const matchSearch = searchValue === '' || row.textContent.toLowerCase().includes(searchValue);
+            
+            if (matchCat && matchFee && matchSearch) {
                 row.style.display = '';
                 visibleCount++;
             } else {
@@ -500,6 +526,7 @@ document.addEventListener("DOMContentLoaded", function() {
     
     if (filterCategory) filterCategory.addEventListener('change', applyFilters);
     if (filterFee) filterFee.addEventListener('change', applyFilters);
+    if (searchEvent) searchEvent.addEventListener('keyup', applyFilters);
 });
 </script>
 

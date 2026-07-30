@@ -49,8 +49,8 @@ require_once __DIR__ . '/helpers.php';
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <!-- Custom Stylesheets -->
-    <link rel="stylesheet" href="../assets/css/themes.css">
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/themes.css?v=2.1">
+    <link rel="stylesheet" href="../assets/css/style.css?v=2.1">
 </head>
 <body>
     <!-- Theme Initialization: Read stored theme BEFORE render to prevent flash -->
@@ -118,6 +118,9 @@ require_once __DIR__ . '/helpers.php';
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="../organizer/create_event.php">Create Event</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../organizer/quick_attendance.php">Attendance</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="../organizer/participant_requests.php">Participant Requests</a>
