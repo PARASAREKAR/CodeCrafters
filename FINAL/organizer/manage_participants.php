@@ -36,6 +36,11 @@ $action = $_GET['action'] ?? '';
 $reg_id = isset($_GET['reg_id']) ? (int) $_GET['reg_id'] : 0;
 
 if ($action && $reg_id > 0) {
+    if (!validateCsrfToken($_GET['csrf_token'] ?? '')) {
+        setFlashMessage('Invalid CSRF token.', 'danger');
+        header("Location: manage_participants.php?event_id=$event_id");
+        exit;
+    }
 
     // Ensure the registration belongs to this event
     $stmtCheck = $pdo->prepare(
@@ -69,15 +74,19 @@ if ($action && $reg_id > 0) {
 
 // ── Fetch participants ─────────────────────────────────────────
 $stmtParts = $pdo->prepare(
-    "SELECT r.Registration_ID, u.Full_Name, u.Email, u.Mobile,
-            u.College_Organization, r.Registration_Date, r.Status
+    "SELECT r.Registration_ID, u.Name, u.Email, u.Mobile,
+            r.College_Organization, r.Registration_Date, r.Status, r.organizer_approved,
+            COALESCE(p.status, 'No QR') AS payment_status
      FROM registrations r
      JOIN users u ON r.User_ID = u.User_ID
+     LEFT JOIN payments p ON p.registration_id = r.Registration_ID
      WHERE r.Event_ID = ?
      ORDER BY r.Registration_Date DESC"
 );
 $stmtParts->execute([$event_id]);
 $participants = $stmtParts->fetchAll(PDO::FETCH_ASSOC);
+
+$csrfToken = generateCsrfToken();
 
 $pageTitle = "Manage Participants";
 require_once '../includes/header.php';
@@ -131,22 +140,23 @@ require_once '../includes/header.php';
                 <div class="table-responsive">
                     <table class="table table-custom align-middle searchable-table" id="participantsTable">
                         <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Mobile</th>
-                                <th>College / Org</th>
-                                <th>Registration Date</th>
-                                <th>Status</th>
-                                <th class="text-center">Actions</th>
-                            </tr>
-                        </thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>College / Org</th>
+                            <th>Reg. Date</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
                         <tbody>
                             <?php foreach ($participants as $i => $p): ?>
                                 <tr>
                                     <td><?php echo $i + 1; ?></td>
-                                    <td><?php echo htmlspecialchars($p['Full_Name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                    <td><?php echo htmlspecialchars($p['Name'], ENT_QUOTES, 'UTF-8'); ?></td>
                                     <td><?php echo htmlspecialchars($p['Email'], ENT_QUOTES, 'UTF-8'); ?></td>
                                     <td><?php echo htmlspecialchars($p['Mobile'] ?? 'N/A', ENT_QUOTES, 'UTF-8'); ?></td>
                                     <td><?php echo htmlspecialchars($p['College_Organization'] ?? 'N/A', ENT_QUOTES, 'UTF-8'); ?></td>
@@ -161,16 +171,31 @@ require_once '../includes/header.php';
                                             <?php echo htmlspecialchars($p['Status'], ENT_QUOTES, 'UTF-8'); ?>
                                         </span>
                                     </td>
+                                    <td>
+                                        <?php if ($p['payment_status'] === 'Paid'): ?>
+                                            <span class="badge bg-success">✅ Paid</span>
+                                        <?php elseif ($p['payment_status'] === 'Pending'): ?>
+                                            <span class="badge bg-warning text-dark">⏳ Pending</span>
+                                        <?php else: ?>
+                                            <span class="badge bg-secondary">—</span>
+                                        <?php endif; ?>
+                                    </td>
                                     <td class="text-center">
-                                        <?php if ($p['Status'] === 'Pending'): ?>
-                                            <a href="manage_participants.php?event_id=<?php echo (int) $event_id; ?>&action=approve&reg_id=<?php echo (int) $p['Registration_ID']; ?>"
-                                               class="btn btn-sm btn-outline-success me-1" title="Approve"
-                                               onclick="return confirm('Approve this registration?');">
-                                                <i class="bi bi-check-circle"></i> Approve
-                                            </a>
+                                        <?php if ($p['Status'] === 'Pending' && !$p['organizer_approved']): ?>
+                                            <!-- Accept Registration & Send QR Email -->
+                                            <form method="POST" action="accept_registration.php" class="d-inline"
+                                                  onsubmit="return confirm('Accept this registration and send payment QR to participant?');">
+                                                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
+                                                <input type="hidden" name="registration_id" value="<?php echo (int)$p['Registration_ID']; ?>">
+                                                <button type="submit" class="btn btn-sm btn-success me-1" title="Accept & Send QR">
+                                                    <i class="bi bi-check-circle"></i> Accept & Send QR
+                                                </button>
+                                            </form>
+                                        <?php elseif ($p['organizer_approved']): ?>
+                                            <span class="badge bg-success me-1">✅ Accepted</span>
                                         <?php endif; ?>
                                         <?php if ($p['Status'] !== 'Cancelled'): ?>
-                                            <a href="manage_participants.php?event_id=<?php echo (int) $event_id; ?>&action=remove&reg_id=<?php echo (int) $p['Registration_ID']; ?>"
+                                            <a href="manage_participants.php?event_id=<?php echo (int) $event_id; ?>&action=remove&reg_id=<?php echo (int) $p['Registration_ID']; ?>&csrf_token=<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>"
                                                class="btn btn-sm btn-outline-danger" title="Remove"
                                                onclick="return confirm('Cancel this registration?');">
                                                 <i class="bi bi-x-circle"></i> Remove

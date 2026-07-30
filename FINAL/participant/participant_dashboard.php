@@ -293,20 +293,22 @@ require_once '../includes/header.php';
                 <div class="card glass-card event-card-custom h-100 d-flex flex-column overflow-hidden" style="border-radius: 20px;">
                     
                     <!-- Event Banner Image -->
-                    <div style="height: 150px; width: 100%; overflow: hidden; position: relative;">
+                    <div class="event-card-img-wrap position-relative" style="height: 150px; width: 100%;">
                         <?php
+                        $event_cat = $event['Event_Category'] ?? 'General';
                         $imgPath = $event['Image_Path'] ?? '';
-                        $imgSrc = '';
-                        if (!empty($imgPath) && file_exists('../' . $imgPath)) {
-                            $imgSrc = '../' . htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8');
-                        } elseif (!empty($imgPath) && file_exists($imgPath)) {
-                            $imgSrc = htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8');
-                        } else {
-                            $placeholderId = (($index ?? 0) % 3) + 1;
-                            $imgSrc = '../assets/images/placeholder-' . $placeholderId . '.png';
-                        }
-                        ?>
-                        <img src="<?php echo $imgSrc; ?>" alt="Event Banner" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                        if (!empty($imgPath) && file_exists('../' . $imgPath)): ?>
+                            <img src="../<?php echo htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8'); ?>" alt="Event Banner" class="event-card-img h-100">
+                        <?php elseif (!empty($imgPath) && file_exists($imgPath)): ?>
+                            <img src="<?php echo htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8'); ?>" alt="Event Banner" class="event-card-img h-100">
+                        <?php else: ?>
+                            <img src="<?php echo htmlspecialchars(getCategoryImage($event_cat, '../'), ENT_QUOTES, 'UTF-8'); ?>" alt="Event Banner" class="event-card-img h-100">
+                        <?php endif; ?>
+                        <?php if (isset($event['Event_Fee']) && $event['Event_Fee'] > 0): ?>
+                            <span class="event-fee-badge" style="font-size: 11px; padding: 3px 10px;">₹<?php echo number_format($event['Event_Fee'], 0); ?></span>
+                        <?php else: ?>
+                            <span class="event-fee-badge bg-success text-white border-0" style="font-size: 11px; padding: 3px 10px;">Free</span>
+                        <?php endif; ?>
                     </div>
 
                     <div class="p-4 d-flex flex-column flex-grow-1">

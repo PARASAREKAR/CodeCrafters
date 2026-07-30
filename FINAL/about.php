@@ -48,7 +48,7 @@ require_once 'includes/helpers.php';
         <div class="container">
             <!-- Brand -->
             <a class="navbar-brand fw-bold" href="index.php">
-                <span style="color: var(--accent);">🎯</span> EventHub
+                <img src="assets/images/logo.png" alt="EventHub Logo" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid var(--accent);"> EventHub
             </a>
 
             <!-- Mobile Toggle -->
@@ -116,10 +116,12 @@ require_once 'includes/helpers.php';
     </nav>
 
     <!-- Page Header Hero -->
-    <header class="py-5 text-center bg-glass" style="margin-top: 120px; border-radius: 24px; margin-left: 15px; margin-right: 15px;">
-        <div class="container py-4" data-aos="zoom-in">
-            <h1 class="display-4 fw-bold">About <span style="color: var(--accent);">EventHub</span></h1>
-            <p class="lead text-muted max-width-600 mx-auto">Bridging the gap between passionate event organizers and attendees worldwide.</p>
+    <header class="py-5 text-center position-relative overflow-hidden" style="margin-top: 120px; border-radius: 24px; margin-left: 15px; margin-right: 15px; min-height: 300px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: url('assets/images/hero-bg-premium.png') center/cover no-repeat; filter: brightness(0.35);"></div>
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));"></div>
+        <div class="container position-relative z-1 py-4" data-aos="zoom-in">
+            <h1 class="display-4 fw-bold text-white text-shadow-sm">About <span style="color: var(--accent);">EventHub</span></h1>
+            <p class="lead text-light max-width-600 mx-auto text-shadow-sm" style="opacity: 0.9;">Bridging the gap between passionate event organizers and attendees worldwide.</p>
         </div>
     </header>
 
@@ -233,7 +235,7 @@ require_once 'includes/helpers.php';
         <div class="container">
             <div class="row g-4 justify-content-between">
                 <div class="col-lg-4 col-md-6">
-                    <span class="footer-brand" style="color: var(--accent);">🎯 EventHub</span>
+                    <span class="footer-brand" style="color: var(--accent);"><img src="assets/images/logo.png" alt="EventHub Logo" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid var(--accent);"> EventHub</span>
                     <p class="footer-desc">
                         Discover and register for world-class tech, business, and creative events. Elevate your potential today.
                     </p>

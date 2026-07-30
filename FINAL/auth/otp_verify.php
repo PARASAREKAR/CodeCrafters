@@ -151,8 +151,8 @@ require_once '../includes/header.php';
 
                 <!-- Verify Button -->
                 <div class="d-grid mb-3">
-                    <button type="submit" class="btn btn-accent btn-lg">
-                        <i class="bi bi-shield-check me-1"></i>Verify & Login
+                    <button type="submit" class="btn btn-accent btn-lg" id="verifyBtn">
+                        <i class="bi bi-shield-check me-1" id="verifyIcon"></i><span id="verifyText">Verify & Login</span>
                     </button>
                 </div>
             </form>
@@ -225,9 +225,29 @@ document.addEventListener("DOMContentLoaded", function() {
             resendBtn.removeAttribute("disabled");
             resendBtn.innerHTML = "Resend Code";
         } else {
-            countdown.textContent = secondsLeft;
+            if(countdown) countdown.textContent = secondsLeft;
         }
     }, 1000);
+
+    // Form Submit Loading States
+    document.querySelector('form[action="otp_verify.php"]').addEventListener('submit', function() {
+        const btn = document.getElementById('verifyBtn');
+        const icon = document.getElementById('verifyIcon');
+        const text = document.getElementById('verifyText');
+        if (btn && icon && text) {
+            btn.classList.add('disabled');
+            icon.className = 'spinner-border spinner-border-sm me-2';
+            text.innerText = 'Verifying...';
+        }
+    });
+
+    document.getElementById('resendForm').addEventListener('submit', function() {
+        const btn = document.getElementById('resendBtn');
+        if (btn) {
+            btn.classList.add('disabled');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Resending...';
+        }
+    });
 });
 </script>
 

@@ -215,7 +215,7 @@ $category_counts['Live Now'] = $live_count;
     <nav class="navbar navbar-expand-lg navbar-custom" data-aos="fade-down" data-aos-delay="100">
         <div class="container">
             <a class="navbar-brand fw-bold" href="index.php">
-                <span style="color: var(--accent);">🎯</span> EventHub
+                <img src="assets/images/logo.png" alt="EventHub Logo" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid var(--accent);"> EventHub
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -281,10 +281,12 @@ $category_counts['Live Now'] = $live_count;
     </nav>
 
     <!-- Page Header Hero -->
-    <header class="py-5 text-center bg-glass" style="margin-top: 120px; border-radius: 24px; margin-left: 15px; margin-right: 15px;">
-        <div class="container py-4" data-aos="zoom-in">
-            <h1 class="display-4 fw-bold">Explore <span style="color: var(--accent);">Events</span></h1>
-            <p class="lead text-muted max-width-600 mx-auto">Browse through our curated lists of upcoming meetups, conferences, workshops, and gatherings.</p>
+    <header class="py-5 text-center position-relative overflow-hidden" style="margin-top: 120px; border-radius: 24px; margin-left: 15px; margin-right: 15px; min-height: 300px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: url('assets/images/hero-bg-premium.png') center/cover no-repeat; filter: brightness(0.35);"></div>
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));"></div>
+        <div class="container position-relative z-1 py-4" data-aos="zoom-in">
+            <h1 class="display-4 fw-bold text-white text-shadow-sm">Explore <span style="color: var(--accent);">Events</span></h1>
+            <p class="lead text-light max-width-600 mx-auto text-shadow-sm" style="opacity: 0.9;">Browse through our curated lists of upcoming meetups, conferences, workshops, and gatherings.</p>
         </div>
     </header>
 
@@ -294,22 +296,26 @@ $category_counts['Live Now'] = $live_count;
 
             <!-- Category Tabs -->
             <div class="category-tabs-wrapper mb-4" data-aos="fade-up">
-                <div class="category-tabs" id="categoryTabs">
-                    <?php foreach ($categories as $cat): ?>
-                        <?php
-                            $is_active = ($filter_category === $cat);
-                            $count = ($cat === 'All') ? $total_upcoming : ($category_counts[$cat] ?? 0);
-                            $tab_params = $_GET;
-                            $tab_params['category'] = $cat;
-                            $tab_url = 'browse_events.php?' . http_build_query($tab_params) . '#events-section';
-                        ?>
-                        <a href="<?php echo htmlspecialchars($tab_url, ENT_QUOTES, 'UTF-8'); ?>"
-                           class="category-tab <?php echo $is_active ? 'active' : ''; ?>">
-                            <span class="category-tab-icon"><?php echo getCategoryIcon($cat); ?></span>
-                            <span class="category-tab-name"><?php echo htmlspecialchars($cat, ENT_QUOTES, 'UTF-8'); ?></span>
-                            <span class="category-tab-count"><?php echo $count; ?></span>
-                        </a>
-                    <?php endforeach; ?>
+                <div class="category-slider-wrap">
+                    <button class="cat-slide-btn" id="catSlideLeft" aria-label="Scroll left"><i class="bi bi-chevron-left"></i></button>
+                    <div class="category-strip" id="categoryStrip">
+                        <?php foreach ($categories as $cat): ?>
+                            <?php
+                                $is_active = ($filter_category === $cat);
+                                $count = ($cat === 'All') ? $total_upcoming : ($category_counts[$cat] ?? 0);
+                                $tab_params = $_GET;
+                                $tab_params['category'] = $cat;
+                                $tab_url = 'browse_events.php?' . http_build_query($tab_params) . '#events-section';
+                            ?>
+                            <a href="<?php echo htmlspecialchars($tab_url, ENT_QUOTES, 'UTF-8'); ?>"
+                               class="category-tab <?php echo $is_active ? 'active' : ''; ?>">
+                                <span class="category-tab-icon"><?php echo getCategoryIcon($cat); ?></span>
+                                <span class="category-tab-name"><?php echo htmlspecialchars($cat, ENT_QUOTES, 'UTF-8'); ?></span>
+                                <span class="category-tab-count"><?php echo $count; ?></span>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                    <button class="cat-slide-btn" id="catSlideRight" aria-label="Scroll right"><i class="bi bi-chevron-right"></i></button>
                 </div>
             </div>
 
@@ -417,12 +423,16 @@ $category_counts['Live Now'] = $live_count;
                     ?>
                     <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="<?php echo ($index % 3) * 100; ?>">
                         <div class="card-custom glass-card landing-event-card h-100 d-flex flex-column">
-                            <div class="event-card-image-wrapper">
+                            <div class="event-card-img-wrap position-relative">
                                 <?php if (!empty($event['Image_Path']) && file_exists($event['Image_Path'])): ?>
-                                    <img src="<?php echo htmlspecialchars($event['Image_Path'], ENT_QUOTES, 'UTF-8'); ?>" alt="Event Image" class="event-card-image">
+                                    <img src="<?php echo htmlspecialchars($event['Image_Path'], ENT_QUOTES, 'UTF-8'); ?>" alt="Event Image" class="event-card-img">
                                 <?php else: ?>
-                                    <?php $placeholder_id = ($index % 3) + 1; ?>
-                                    <img src="assets/images/placeholder-<?php echo $placeholder_id; ?>.png" alt="Event Image" class="event-card-image">
+                                    <img src="<?php echo htmlspecialchars(getCategoryImage($event_cat, ''), ENT_QUOTES, 'UTF-8'); ?>" alt="Event Image" class="event-card-img">
+                                <?php endif; ?>
+                                <?php if (isset($event['Event_Fee']) && $event['Event_Fee'] > 0): ?>
+                                    <span class="event-fee-badge">₹<?php echo number_format($event['Event_Fee'], 0); ?></span>
+                                <?php else: ?>
+                                    <span class="event-fee-badge bg-success text-white border-0">Free</span>
                                 <?php endif; ?>
                             </div>
 
@@ -502,7 +512,7 @@ $category_counts['Live Now'] = $live_count;
         <div class="container">
             <div class="row g-4 justify-content-between">
                 <div class="col-lg-4 col-md-6">
-                    <span class="footer-brand" style="color: var(--accent);">🎯 EventHub</span>
+                    <span class="footer-brand" style="color: var(--accent);"><img src="assets/images/logo.png" alt="EventHub Logo" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid var(--accent);"> EventHub</span>
                     <p class="footer-desc">
                         Discover and register for world-class tech, business, and creative events. Elevate your potential today.
                     </p>
@@ -560,9 +570,29 @@ $category_counts['Live Now'] = $live_count;
             easing: 'ease-out-cubic',
         });
     </script>
+    <!-- Category Slider Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const strip = document.getElementById('categoryStrip');
+            const btnLeft = document.getElementById('catSlideLeft');
+            const btnRight = document.getElementById('catSlideRight');
+            
+            if (btnLeft && btnRight && strip) {
+                btnLeft.addEventListener('click', () => {
+                    strip.scrollBy({ left: -200, behavior: 'smooth' });
+                });
+                btnRight.addEventListener('click', () => {
+                    strip.scrollBy({ left: 200, behavior: 'smooth' });
+                });
+            }
+        });
+    </script>
 </body>
 </html>
 <?php
+/**
+ * Helper: Map category name to an emoji icon
+ */
 function getCategoryIcon($category) {
     $icons = [
         'All'               => '🌐',

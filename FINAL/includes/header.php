@@ -61,14 +61,19 @@ require_once __DIR__ . '/helpers.php';
         })();
     </script>
 
+    <!-- Animated Background Orbs (Feature 4) -->
+    <div class="bg-orb bg-orb-1" aria-hidden="true"></div>
+    <div class="bg-orb bg-orb-2" aria-hidden="true"></div>
+    <div class="bg-orb bg-orb-3" aria-hidden="true"></div>
+
     <!-- ============================================================ -->
     <!-- Navbar -->
     <!-- ============================================================ -->
     <nav class="navbar navbar-expand-lg navbar-custom" data-aos="fade-down" data-aos-duration="600">
         <div class="container">
             <!-- Brand -->
-            <a class="navbar-brand fw-bold" href="../index.php">
-                <span style="color: var(--accent);">🎯</span> EventHub
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="../index.php">
+                <img src="../assets/images/logo.png" alt="EventHub Logo" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid var(--accent);"> EventHub
             </a>
 
             <!-- Mobile Toggle -->
@@ -94,7 +99,10 @@ require_once __DIR__ . '/helpers.php';
                                 <a class="nav-link" href="../admin/manage_users.php">Manage Users</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="../admin/manage_requests.php">Requests</a>
+                                <a class="nav-link" href="../admin/manage_requests.php">Manage Requests</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../admin/view_payments.php">Payments</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="../admin/view_messages.php">Messages</a>
@@ -110,6 +118,9 @@ require_once __DIR__ . '/helpers.php';
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="../organizer/create_event.php">Create Event</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="../organizer/participant_requests.php">Participant Requests</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="../organizer/reports.php">Reports</a>

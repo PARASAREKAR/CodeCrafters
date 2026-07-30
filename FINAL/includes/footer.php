@@ -60,8 +60,10 @@
         <div class="container">
             <div class="row g-4 justify-content-between">
                 <div class="col-lg-4 col-md-6">
-                    <span class="footer-brand" style="color: var(--accent);">🎯 EventHub</span>
-                    <p class="footer-desc">
+                    <span class="footer-brand d-flex align-items-center gap-2" style="color: var(--accent);">
+                        <img src="<?php echo $footer_base; ?>assets/images/logo.png" alt="EventHub Logo" style="height: 28px; width: auto; filter: grayscale(100%) brightness(200%); opacity: 0.8;"> EventHub
+                    </span>
+                    <p class="footer-desc mt-3">
                         Discover and register for world-class tech, business, and creative events. Elevate your potential today.
                     </p>
                     <div class="footer-socials">
@@ -98,13 +100,40 @@
                         <?php endif; ?>
                     </ul>
                 </div>
+                <?php 
+                $showContact = false;
+                if (isLoggedIn()) {
+                    $r = getUserRole();
+                    if ($r === 'Admin' || $r === 'Organizer') {
+                        $showContact = true;
+                    }
+                }
+                if ($showContact): 
+                ?>
                 <div class="col-lg-3 col-md-6">
-                    <h5 class="footer-title">Contact Support</h5>
-                    <p class="footer-desc">Need help? Get in touch with our team.</p>
-                    <div class="footer-links mt-3">
-                        <li><a href="javascript:void(0);" onclick="showSupportUnderProcess(event);"><i class="bi bi-chat-dots me-2"></i>Support Center</a></li>
-                    </div>
+                    <h5 class="footer-title">📞 Contact Us</h5>
+                    <p class="footer-desc">Reach us directly on WhatsApp — we're happy to help!</p>
+                    <ul class="footer-links mt-2">
+                        <li>
+                            <a href="https://wa.me/919137360658" target="_blank" rel="noopener noreferrer"
+                               title="Chat on WhatsApp">
+                                <i class="bi bi-whatsapp me-2" style="color:#25D366;"></i>+91 91373 60658
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="text-muted" title="Number coming soon"
+                               onclick="return false;" style="opacity:0.5; cursor:default;">
+                                <i class="bi bi-whatsapp me-2" style="color:#25D366;"></i>Coming Soon
+                            </a>
+                        </li>
+                        <li class="mt-2">
+                            <a href="<?php echo $footer_base; ?>contact.php">
+                                <i class="bi bi-envelope me-2"></i>Send a Message
+                            </a>
+                        </li>
+                    </ul>
                 </div>
+                <?php endif; ?>
             </div>
             <div class="footer-bottom">
                 <span>&copy; 2026 EventHub. All rights reserved.</span>

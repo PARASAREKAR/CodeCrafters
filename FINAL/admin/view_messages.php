@@ -66,23 +66,23 @@ require_once '../includes/header.php';
                 <table class="table table-custom align-middle mb-0">
                     <thead>
                         <tr>
-                            <th class="ps-4">Sender</th>
-                            <th>Email</th>
-                            <th>Subject</th>
-                            <th>Submitted At</th>
-                            <th class="pe-4 text-end">Actions</th>
+                            <th class="ps-4" style="min-width:130px;">Sender</th>
+                            <th style="min-width:160px;">Email</th>
+                            <th style="max-width:200px;">Subject</th>
+                            <th style="min-width:150px;">Submitted At</th>
+                            <th class="pe-4 text-end" style="min-width:180px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($messages as $msg): ?>
                             <tr class="table-custom-row">
-                                <td class="ps-4 fw-semibold"><?php echo htmlspecialchars($msg['name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                <td>
-                                    <a href="mailto:<?php echo htmlspecialchars($msg['email'], ENT_QUOTES, 'UTF-8'); ?>" class="text-muted-link">
+                                <td class="ps-4 fw-semibold" style="max-width:140px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"><?php echo htmlspecialchars($msg['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td style="max-width:170px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                                    <a href="mailto:<?php echo htmlspecialchars($msg['email'], ENT_QUOTES, 'UTF-8'); ?>" class="text-muted-link" title="<?php echo htmlspecialchars($msg['email'], ENT_QUOTES, 'UTF-8'); ?>">
                                         <?php echo htmlspecialchars($msg['email'], ENT_QUOTES, 'UTF-8'); ?>
                                     </a>
                                 </td>
-                                <td><?php echo htmlspecialchars($msg['subject'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="<?php echo htmlspecialchars($msg['subject'], ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($msg['subject'], ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td class="text-muted"><?php echo htmlspecialchars(date('d M Y, h:i A', strtotime($msg['submitted_at'])), ENT_QUOTES, 'UTF-8'); ?></td>
                                 <td class="pe-4 text-end">
                                     <!-- View Details Button -->
@@ -120,7 +120,7 @@ require_once '../includes/header.php';
      MESSAGE DETAIL MODAL
      ============================================================ -->
 <div class="modal fade" id="messageDetailModal" tabindex="-1" aria-labelledby="messageDetailModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content glass-card border-0 shadow-lg" style="border-radius: 20px;">
             <div class="modal-header border-0 pb-0">
                 <h5 class="modal-title fw-bold" id="messageDetailModalLabel"><i class="bi bi-envelope-paper me-2 text-accent"></i>Message details</h5>
@@ -141,7 +141,7 @@ require_once '../includes/header.php';
                 </div>
                 <div class="mb-3">
                     <label class="small text-muted fw-bold d-block">Message Content</label>
-                    <div id="modalMessage" class="p-3 bg-glass text-muted" style="border-radius: 12px; border: 1px solid var(--border); max-height: 250px; overflow-y: auto; white-space: pre-wrap; line-height: 1.6;"></div>
+                    <div id="modalMessage" class="p-3 bg-glass text-muted" style="border-radius: 12px; border: 1px solid var(--border); max-height: 300px; overflow-y: auto; white-space: pre-wrap; word-break: break-word; overflow-wrap: break-word; word-wrap: break-word; line-height: 1.6;"></div>
                 </div>
                 <div class="mb-0">
                     <label class="small text-muted fw-bold d-block">Submitted At</label>

@@ -11,7 +11,7 @@
 $db_host = 'localhost';
 $db_name = 'event_registration_db';
 $db_user = 'root';
-$db_pass = '';
+$db_pass = 'CS@aids25';
 
 // DSN with utf8mb4 charset
 $dsn = "mysql:host={$db_host};dbname={$db_name};charset=utf8mb4";

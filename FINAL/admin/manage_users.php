@@ -22,6 +22,11 @@ require_once '../includes/helpers.php';
 
 // ── Handle DELETE request via GET parameter ────────────────────
 if (isset($_GET['delete_id'])) {
+    if (!validateCsrfToken($_GET['csrf_token'] ?? '')) {
+        setFlashMessage('danger', 'Invalid security token for deletion.');
+        redirectTo('manage_users.php');
+    }
+
     $deleteId = (int) $_GET['delete_id'];
     $currentAdminId = (int) ($_SESSION['user_id'] ?? 0);
 
@@ -247,7 +252,7 @@ require_once '../includes/header.php';
                                             </button>
                                             
                                             <!-- Delete -->
-                                            <a href="manage_users.php?delete_id=<?php echo (int) $user['User_ID']; ?>"
+                                            <a href="manage_users.php?delete_id=<?php echo (int) $user['User_ID']; ?>&csrf_token=<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>"
                                                class="btn btn-sm btn-outline-danger"
                                                onclick="return confirm('Are you sure you want to delete this participant? This action cannot be undone.');">
                                                 <i class="bi bi-trash"></i>
@@ -327,7 +332,7 @@ require_once '../includes/header.php';
                                             </button>
                                             
                                             <!-- Delete -->
-                                            <a href="manage_users.php?delete_id=<?php echo (int) $user['User_ID']; ?>"
+                                            <a href="manage_users.php?delete_id=<?php echo (int) $user['User_ID']; ?>&csrf_token=<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>"
                                                class="btn btn-sm btn-outline-danger"
                                                onclick="return confirm('Are you sure you want to delete this organizer? This action cannot be undone.');">
                                                 <i class="bi bi-trash"></i>
@@ -408,7 +413,7 @@ require_once '../includes/header.php';
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             <?php else: ?>
-                                                <a href="manage_users.php?delete_id=<?php echo (int) $user['User_ID']; ?>"
+                                                <a href="manage_users.php?delete_id=<?php echo (int) $user['User_ID']; ?>&csrf_token=<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>"
                                                    class="btn btn-sm btn-outline-danger"
                                                    onclick="return confirm('Are you sure you want to delete this administrator account? This action cannot be undone.');">
                                                     <i class="bi bi-trash"></i>

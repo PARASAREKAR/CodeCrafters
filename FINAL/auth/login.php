@@ -83,13 +83,26 @@ require_once '../includes/header.php';
                            placeholder="Enter your password" required>
                 </div>
 
-                <!-- Submit Button (Full Width) -->
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-accent btn-lg">
-                        <i class="bi bi-box-arrow-in-right me-1"></i>Sign In
+                    <button type="submit" class="btn btn-accent btn-lg" id="loginBtn">
+                        <i class="bi bi-box-arrow-in-right me-1" id="loginIcon"></i><span id="loginText">Sign In</span>
                     </button>
                 </div>
             </form>
+            
+            <script>
+            document.querySelector('form').addEventListener('submit', function() {
+                const btn = document.getElementById('loginBtn');
+                const icon = document.getElementById('loginIcon');
+                const text = document.getElementById('loginText');
+                
+                if (btn && icon && text) {
+                    btn.classList.add('disabled');
+                    icon.className = 'spinner-border spinner-border-sm me-2';
+                    text.innerText = 'Sending OTP...';
+                }
+            });
+            </script>
 
             <!-- Forgot Password Link -->
             <p class="text-center mt-3 mb-2">

@@ -225,11 +225,26 @@ require_once '../includes/header.php';
 
                 <!-- Submit Button -->
                 <div class="d-grid">
-                    <button type="submit" class="btn btn-accent btn-lg">
-                        <i class="bi bi-person-plus me-1"></i>Create Account
+                    <button type="submit" class="btn btn-accent btn-lg" id="registerBtn">
+                        <i class="bi bi-person-plus me-1" id="registerIcon"></i><span id="registerText">Create Account</span>
                     </button>
                 </div>
             </form>
+            
+            <script>
+            document.querySelector('form').addEventListener('submit', function() {
+                const btn = document.getElementById('registerBtn');
+                const icon = document.getElementById('registerIcon');
+                const text = document.getElementById('registerText');
+                
+                // Only show loading if form is valid (HTML5 validation passed)
+                if (this.checkValidity() && btn && icon && text) {
+                    btn.classList.add('disabled');
+                    icon.className = 'spinner-border spinner-border-sm me-2';
+                    text.innerText = 'Creating Account...';
+                }
+            });
+            </script>
 
             <?php
                 // Clear preserved form data after rendering

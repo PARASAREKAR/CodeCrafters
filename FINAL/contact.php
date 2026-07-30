@@ -21,7 +21,12 @@ $sender_email = '';
 $sender_subject = '';
 $errors = [];
 
+$csrfToken = generateCsrfToken();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $errors[] = "Invalid security token. Please try again.";
+    } else {
     $sender_name    = trim(htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8'));
     $sender_email   = trim(filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL));
     $sender_subject = trim(htmlspecialchars($_POST['subject'] ?? '', ENT_QUOTES, 'UTF-8'));
@@ -143,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
             $errors[] = "Failed to submit your message: " . $e->getMessage();
         }
     }
+    } // end else for CSRF
 }
 ?>
 <!DOCTYPE html>
@@ -186,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
         <div class="container">
             <!-- Brand -->
             <a class="navbar-brand fw-bold" href="index.php">
-                <span style="color: var(--accent);">🎯</span> EventHub
+                <img src="assets/images/logo.png" alt="EventHub Logo" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid var(--accent);"> EventHub
             </a>
 
             <!-- Mobile Toggle -->
@@ -315,6 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
                         <!-- Contact Form -->
                         <h3 class="fw-bold text-center mb-4">Send Us a Message</h3>
                         <form action="contact.php" method="POST">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="name" class="form-label text-muted">Your Name</label>
@@ -333,7 +340,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
                                 </div>
                                 <div class="col-12">
                                     <label for="message" class="form-label text-muted">Message</label>
-                                    <textarea class="form-control form-control-custom" id="message" name="message" rows="5" required placeholder="Type your message here..."><?php echo htmlspecialchars($_POST['message'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
+                                    <textarea class="form-control form-control-custom" id="message" name="message" rows="6" required placeholder="Type your message here..." maxlength="3000" style="word-break: break-word; overflow-wrap: break-word; word-wrap: break-word; resize: vertical; white-space: pre-wrap;"><?php echo htmlspecialchars($_POST['message'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
+                                    <div class="text-end mt-1"><small class="text-muted" id="msgCharCount">0 / 3000 characters</small></div>
                                 </div>
                                 <div class="col-12 text-center mt-4">
                                     <button type="submit" name="submit_message" class="btn btn-accent px-5 py-2">
@@ -352,7 +360,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
         <div class="container">
             <div class="row g-4 justify-content-between">
                 <div class="col-lg-4 col-md-6">
-                    <span class="footer-brand" style="color: var(--accent);">🎯 EventHub</span>
+                    <span class="footer-brand" style="color: var(--accent);"><img src="assets/images/logo.png" alt="EventHub Logo" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid var(--accent);"> EventHub</span>
                     <p class="footer-desc">
                         Discover and register for world-class tech, business, and creative events. Elevate your potential today.
                     </p>
@@ -408,6 +416,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
             duration: 800,
             easing: 'ease-out-cubic',
         });
+    </script>
+    <script>
+        // Live character counter for message textarea
+        (function () {
+            var msgBox = document.getElementById('message');
+            var counter = document.getElementById('msgCharCount');
+            if (msgBox && counter) {
+                function updateCount() {
+                    var len = msgBox.value.length;
+                    var max = parseInt(msgBox.getAttribute('maxlength')) || 3000;
+                    counter.textContent = len + ' / ' + max + ' characters';
+                    counter.style.color = (len > max * 0.9) ? '#ef4444' : '';
+                }
+                updateCount();
+                msgBox.addEventListener('input', updateCount);
+            }
+        })();
     </script>
 </body>
 </html>

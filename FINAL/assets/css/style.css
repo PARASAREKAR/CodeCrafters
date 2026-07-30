@@ -27,6 +27,9 @@ body {
   padding: 0;
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: var(--bg-primary);
+  background-image: radial-gradient(circle at 15% 50%, var(--accent-light), transparent 25%), radial-gradient(circle at 85% 30%, var(--accent-light), transparent 25%);
+  background-attachment: fixed;
+  background-size: cover;
   color: var(--text-primary);
   line-height: 1.7;
   min-height: 100vh;
@@ -1214,6 +1217,65 @@ a:hover {
   .stat-card {
     margin-bottom: 1rem;
   }
+  .navbar-custom {
+    padding: 0.75rem 1.25rem !important;
+    border-radius: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    top: 0 !important;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+  }
+  .navbar-custom .navbar-toggler {
+    order: 1;
+  }
+  .navbar-custom .navbar-brand {
+    order: 2;
+    margin-right: 0 !important;
+  }
+  .navbar-custom .navbar-collapse {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 300px;
+    max-width: 85vw;
+    height: 100vh !important;
+    background: var(--bg-card);
+    border-right: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    z-index: 1060;
+    display: block !important;
+    visibility: hidden;
+    transition: left 0.3s ease-in-out, visibility 0.3s;
+    overflow-y: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .navbar-custom .navbar-collapse.show {
+    left: 0;
+    visibility: visible;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.15), 0 0 0 10000px rgba(0,0,0,0.5);
+    transition: left 0.3s ease-in-out, visibility 0s;
+  }
+
+  .navbar-custom .navbar-collapse.collapsing {
+    position: fixed;
+    top: 0;
+    left: -320px; /* Animate from left */
+    width: 300px;
+    max-width: 85vw;
+    height: 100vh !important;
+    background: var(--bg-card);
+    border-right: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    z-index: 1060;
+    display: block !important;
+    visibility: visible;
+    transition: left 0.3s ease-in-out;
+  }
 }
 
 @media (max-width: 767.98px) {
@@ -1368,5 +1430,151 @@ a:hover {
   box-shadow: 0 0 12px rgba(0, 229, 255, 0.25) !important;
   transform: translateY(-1px);
   transition: all 0.25s ease;
+}
+
+/* ============================================================
+   FEATURE 4 — Animated Backgrounds & Visual Effects
+   ============================================================ */
+
+/* Floating animated glow orbs */
+@keyframes floatOrb {
+  0%   { transform: translateY(0px) scale(1); opacity: 0.35; }
+  50%  { transform: translateY(-30px) scale(1.08); opacity: 0.55; }
+  100% { transform: translateY(0px) scale(1); opacity: 0.35; }
+}
+@keyframes floatOrb2 {
+  0%   { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.25; }
+  33%  { transform: translateY(20px) translateX(-15px) scale(1.05); opacity: 0.45; }
+  66%  { transform: translateY(-10px) translateX(10px) scale(0.95); opacity: 0.3; }
+  100% { transform: translateY(0px) translateX(0px) scale(1); opacity: 0.25; }
+}
+@keyframes pulseGlow {
+  0%   { box-shadow: 0 0 0px rgba(var(--accent-rgb),0); }
+  50%  { box-shadow: 0 0 30px rgba(var(--accent-rgb),0.25); }
+  100% { box-shadow: 0 0 0px rgba(var(--accent-rgb),0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Background orb decorations — inject via .bg-orbs wrapper */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+.bg-orb-1 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.18) 0%, transparent 70%);
+  top: -100px; right: -100px;
+  animation: floatOrb 8s ease-in-out infinite;
+}
+.bg-orb-2 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(120, 80, 255, 0.15) 0%, transparent 70%);
+  bottom: 10%; left: -80px;
+  animation: floatOrb2 11s ease-in-out infinite;
+}
+.bg-orb-3 {
+  width: 250px; height: 250px;
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.10) 0%, transparent 70%);
+  top: 40%; right: 5%;
+  animation: floatOrb 14s ease-in-out infinite reverse;
+}
+
+/* Shimmer highlight on card hover */
+.glass-card:hover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.glass-card { position: relative; overflow: hidden; }
+
+/* Pulse glow on accent buttons */
+.btn-accent:hover {
+  animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+/* ============================================================
+   EVENT CARD IMAGE STYLES (Feature 1)
+   ============================================================ */
+.event-card-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 16px 16px 0 0;
+  transition: transform 0.4s ease;
+}
+.event-card-img-wrap {
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+}
+.event-card-img-wrap:hover .event-card-img {
+  transform: scale(1.06);
+}
+.event-fee-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.7);
+  color: #fbbf24;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(251,191,36,0.3);
+}
+
+/* ============================================================
+   CATEGORY SLIDER (Feature 2)
+   ============================================================ */
+.category-slider-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.category-strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  padding: 6px 2px;
+  flex: 1;
+}
+.category-strip::-webkit-scrollbar { display: none; }
+.cat-slide-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+.cat-slide-btn:hover {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+  transform: scale(1.1);
 }
 

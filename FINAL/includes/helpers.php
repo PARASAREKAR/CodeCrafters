@@ -146,3 +146,33 @@ function validateCSRFToken($token) {
 function displayFlashMessage() {
     echo getFlashMessage();
 }
+
+/**
+ * Returns the image path for a given event category.
+ * Falls back to placeholder if category image doesn't exist.
+ *
+ * @param string $category   Event category name
+ * @param string $base       Base path prefix ('' for root, '../' for subdirs)
+ * @return string            Relative image path
+ */
+function getCategoryImage(string $category, string $base = ''): string {
+    $map = [
+        'Tech'        => 'cat_tech.png',
+        'Technology'  => 'cat_tech.png',
+        'Business'    => 'cat_business.png',
+        'Music'       => 'cat_music.png',
+        'Art'         => 'cat_art.png',
+        'Food'        => 'cat_food.png',
+        'Sports'      => 'cat_sports.png',
+        'Science'     => 'cat_science.png',
+        'Health'      => 'cat_health.png',
+        'Health & Wellness' => 'cat_health.png',
+        'Creative'    => 'cat_creative.png',
+        'Arts & Culture' => 'cat_art.png',
+    ];
+    $file = $map[$category] ?? null;
+    if ($file) {
+        return $base . 'assets/images/' . $file;
+    }
+    return $base . 'assets/images/placeholder-1.png';
+}

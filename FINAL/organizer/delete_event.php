@@ -17,8 +17,20 @@ requireRole(['Organizer']);
 require_once '../config/db_connect.php';
 require_once '../includes/helpers.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    setFlashMessage('Invalid request method.', 'danger');
+    header('Location: organizer_dashboard.php');
+    exit;
+}
+
+if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+    setFlashMessage('Invalid CSRF token.', 'danger');
+    header('Location: organizer_dashboard.php');
+    exit;
+}
+
 $user_id  = $_SESSION['user_id'];
-$event_id = isset($_GET['event_id']) ? (int) $_GET['event_id'] : 0;
+$event_id = isset($_POST['event_id']) ? (int) $_POST['event_id'] : 0;
 
 // ── Validate event_id ──────────────────────────────────────────
 if ($event_id <= 0) {

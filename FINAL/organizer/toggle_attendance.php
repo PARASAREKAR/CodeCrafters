@@ -75,13 +75,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // ── Fetch confirmed participants with existing attendance ──────
 $stmtParts = $pdo->prepare(
-    "SELECT r.Registration_ID, u.Full_Name, u.Email,
+    "SELECT r.Registration_ID, u.Name, u.Email,
             a.Status AS Attendance_Status
      FROM registrations r
      JOIN users u ON r.User_ID = u.User_ID
      LEFT JOIN attendance a ON r.Registration_ID = a.Registration_ID
      WHERE r.Event_ID = ? AND r.Status = 'Confirmed'
-     ORDER BY u.Full_Name ASC"
+     ORDER BY u.Name ASC"
 );
 $stmtParts->execute([$event_id]);
 $participants = $stmtParts->fetchAll(PDO::FETCH_ASSOC);
@@ -136,7 +136,7 @@ require_once '../includes/header.php';
                                 <?php foreach ($participants as $i => $p): ?>
                                     <tr>
                                         <td><?php echo $i + 1; ?></td>
-                                        <td><?php echo htmlspecialchars($p['Full_Name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                        <td><?php echo htmlspecialchars($p['Name'], ENT_QUOTES, 'UTF-8'); ?></td>
                                         <td><?php echo htmlspecialchars($p['Email'], ENT_QUOTES, 'UTF-8'); ?></td>
                                         <td>
                                             <select name="attendance[<?php echo (int) $p['Registration_ID']; ?>]"

@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     /* ── 5. INSERT registration ───────────────────────────── */
     $stmt_insert = $pdo->prepare(
         "INSERT INTO registrations (User_ID, Event_ID, Registration_Date, Status, College_Organization)
-         VALUES (?, ?, CURDATE(), 'Confirmed', ?)"
+         VALUES (?, ?, CURDATE(), 'Pending', ?)"
     );
     $stmt_insert->execute([$user_id, $event_id, $college_organization]);
 
@@ -116,53 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt_mobile->execute([$mobile, $user_id]);
     }
 
-    /* ── 7. Send Confirmation Email via PHPMailer (SMTP) ───── */
-    $stmt_u = $pdo->prepare("SELECT Name, Email FROM users WHERE User_ID = ?");
-    $stmt_u->execute([$user_id]);
-    $u_data = $stmt_u->fetch(PDO::FETCH_ASSOC);
 
-    $user_email = $u_data['Email'] ?? '';
-    $user_name  = $u_data['Name']  ?? 'Participant';
-
-    if (!empty($user_email)) {
-        $mail = new PHPMailer(true);
-        try {
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'eventoraganizers2026@gmail.com';
-            $mail->Password   = 'gdtfdzdcubqpenyq';
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port       = 587;
-
-            $mail->setFrom('eventoraganizers2026@gmail.com', 'EventHub System');
-            $mail->addAddress($user_email, $user_name);
-
-            $mail->isHTML(true);
-            $mail->Subject = "Registration Confirmation: " . $event_name;
-            $mail->Body = "
-                <div style='font-family: Arial, sans-serif; line-height: 1.6; color: #1a1a2e; max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; background: #ffffff;'>
-                    <h2 style='color: #0d6efd; margin-top: 0;'>🎉 Registration Successful!</h2>
-                    <p>Hello <b>" . htmlspecialchars($user_name, ENT_QUOTES, 'UTF-8') . "</b>,</p>
-                    <p>Congratulations! You have successfully registered for <b>" . htmlspecialchars($event_name, ENT_QUOTES, 'UTF-8') . "</b>.</p>
-                    
-                    <div style='background: #f8fafc; border-left: 4px solid #0d6efd; padding: 15px; border-radius: 4px; margin: 20px 0;'>
-                        <h4 style='margin: 0 0 10px 0; color: #0d6efd;'>Event Details</h4>
-                        <p style='margin: 4px 0;'><b>Event:</b> " . htmlspecialchars($event_name, ENT_QUOTES, 'UTF-8') . "</p>
-                        <p style='margin: 4px 0;'><b>Date:</b> " . htmlspecialchars($event_row['Event_Date'] ?? date('Y-m-d'), ENT_QUOTES, 'UTF-8') . "</p>
-                        <p style='margin: 4px 0;'><b>Venue:</b> " . htmlspecialchars($event_row['Venue'] ?? 'Venue Details', ENT_QUOTES, 'UTF-8') . "</p>
-                    </div>
-
-                    <p>You can view and manage your registration anytime from your EventHub Dashboard.</p>
-                    <br>
-                    <p style='color: #64748b; font-size: 13px;'>Best regards,<br><b>EventHub Team</b><br>eventoraganizers2026@gmail.com</p>
-                </div>
-            ";
-            $mail->send();
-        } catch (Exception $e) {
-            error_log('Registration Email Error: ' . $mail->ErrorInfo);
-        }
-    }
 
     /* ── 8. Store modal session data & redirect ────────────── */
     $_SESSION['registration_success_modal'] = [
@@ -172,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     setFlashMessage(
         'success',
-        'Registration Successful! A confirmation email has been sent to ' . htmlspecialchars($user_email, ENT_QUOTES, 'UTF-8') . '.'
+        'Registration requested! Please wait for the organizer to accept your request.'
     );
     header('Location: my_registrations.php');
     exit;
@@ -192,7 +146,12 @@ if ($event_id <= 0) {
 }
 
 /* ── Fetch event details ──────────────────────────────────── */
-$stmt_event = $pdo->prepare('SELECT * FROM events WHERE Event_ID = ?');
+$stmt_event = $pdo->prepare('
+    SELECT e.*, u.Name as Organizer_Name, u.Email as Organizer_Email, u.Mobile as Organizer_Mobile 
+    FROM events e 
+    JOIN users u ON e.created_by = u.User_ID 
+    WHERE e.Event_ID = ?
+');
 $stmt_event->execute([$event_id]);
 $event = $stmt_event->fetch(PDO::FETCH_ASSOC);
 
@@ -290,6 +249,17 @@ require_once '../includes/header.php';
                         <li><i class="bi bi-people me-1"></i>
                             <strong>Available Spots:</strong>
                             <?php echo $available_spots; ?> / <?php echo $capacity; ?>
+                        </li>
+                        <hr class="my-2" style="border-color: rgba(0,0,0,0.1);">
+                        <li><i class="bi bi-person-badge me-1"></i>
+                            <strong>Organizer:</strong>
+                            <?php echo htmlspecialchars($event['Organizer_Name'] ?? 'N/A', ENT_QUOTES, 'UTF-8'); ?>
+                        </li>
+                        <li><i class="bi bi-envelope-at me-1"></i>
+                            <strong>Contact Email:</strong>
+                            <a href="mailto:<?php echo htmlspecialchars($event['Organizer_Email'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" class="text-decoration-none">
+                                <?php echo htmlspecialchars($event['Organizer_Email'] ?? 'N/A', ENT_QUOTES, 'UTF-8'); ?>
+                            </a>
                         </li>
                     </ul>
                 </div>

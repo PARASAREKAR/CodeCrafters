@@ -131,11 +131,28 @@ require_once '../includes/header.php';
                             <tbody>
                                 <?php foreach ($pending_events as $event): ?>
                                     <tr>
-                                        <td class="fw-bold">
-                                            <?php echo htmlspecialchars($event['Event_Name'], ENT_QUOTES, 'UTF-8'); ?><br>
-                                            <small class="text-muted text-truncate d-inline-block" style="max-width: 200px;" title="<?php echo htmlspecialchars($event['Description'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
-                                                <?php echo htmlspecialchars($event['Description'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
-                                            </small>
+                                        <td class="fw-bold d-flex align-items-center gap-3">
+                                            <?php
+                                            $event_cat = $event['Event_Category'] ?? 'General';
+                                            $imgPath = $event['Image_Path'] ?? '';
+                                            $imgSrc = '';
+                                            if (!empty($imgPath) && file_exists('../' . $imgPath)) {
+                                                $imgSrc = '../' . htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8');
+                                            } elseif (!empty($imgPath) && file_exists($imgPath)) {
+                                                $imgSrc = htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8');
+                                            } else {
+                                                $imgSrc = htmlspecialchars(getCategoryImage($event_cat, '../'), ENT_QUOTES, 'UTF-8');
+                                            }
+                                            ?>
+                                            <div style="width: 48px; height: 48px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+                                                <img src="<?php echo $imgSrc; ?>" alt="Event Thumbnail" style="width: 100%; height: 100%; object-fit: cover;">
+                                            </div>
+                                            <div>
+                                                <?php echo htmlspecialchars($event['Event_Name'], ENT_QUOTES, 'UTF-8'); ?><br>
+                                                <small class="text-muted text-truncate d-inline-block" style="max-width: 200px;" title="<?php echo htmlspecialchars($event['Description'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                                    <?php echo htmlspecialchars($event['Description'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
+                                                </small>
+                                            </div>
                                         </td>
                                         <td><?php echo htmlspecialchars($event['OrganizerName'] ?? 'Unknown', ENT_QUOTES, 'UTF-8'); ?></td>
                                         <td>

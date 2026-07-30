@@ -187,20 +187,22 @@ require_once '../includes/header.php';
                     <div class="card-custom glass-card h-100 d-flex flex-column overflow-hidden" style="border-radius: 20px;">
                         
                         <!-- Event Banner Image -->
-                        <div style="height: 160px; width: 100%; overflow: hidden; position: relative;">
+                        <div class="event-card-img-wrap position-relative">
                             <?php
+                            $event_cat = $event['Event_Category'] ?? 'General';
                             $imgPath = $event['Image_Path'] ?? '';
-                            $imgSrc = '';
-                            if (!empty($imgPath) && file_exists('../' . $imgPath)) {
-                                $imgSrc = '../' . htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8');
-                            } elseif (!empty($imgPath) && file_exists($imgPath)) {
-                                $imgSrc = htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8');
-                            } else {
-                                $placeholderId = (($index ?? 0) % 3) + 1;
-                                $imgSrc = '../assets/images/placeholder-' . $placeholderId . '.png';
-                            }
-                            ?>
-                            <img src="<?php echo $imgSrc; ?>" alt="Event Image" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;">
+                            if (!empty($imgPath) && file_exists('../' . $imgPath)): ?>
+                                <img src="../<?php echo htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8'); ?>" alt="Event Image" class="event-card-img">
+                            <?php elseif (!empty($imgPath) && file_exists($imgPath)): ?>
+                                <img src="<?php echo htmlspecialchars($imgPath, ENT_QUOTES, 'UTF-8'); ?>" alt="Event Image" class="event-card-img">
+                            <?php else: ?>
+                                <img src="<?php echo htmlspecialchars(getCategoryImage($event_cat, '../'), ENT_QUOTES, 'UTF-8'); ?>" alt="Event Image" class="event-card-img">
+                            <?php endif; ?>
+                            <?php if (isset($event['Event_Fee']) && $event['Event_Fee'] > 0): ?>
+                                <span class="event-fee-badge">₹<?php echo number_format($event['Event_Fee'], 0); ?></span>
+                            <?php else: ?>
+                                <span class="event-fee-badge bg-success text-white border-0">Free</span>
+                            <?php endif; ?>
                         </div>
 
                         <div class="p-4 d-flex flex-column flex-grow-1">

@@ -43,7 +43,7 @@ $barClass   = $percentage >= 90 ? 'bg-danger' : ($percentage >= 70 ? 'bg-warning
 
 // ── Fetch registered participants ──────────────────────────────
 $stmtParts = $pdo->prepare(
-    "SELECT u.Full_Name, u.Email, u.Mobile, u.College_Organization,
+    "SELECT u.Name, u.Email, u.Mobile, u.College_Organization,
             r.Registration_Date, r.Status
      FROM registrations r
      JOIN users u ON r.User_ID = u.User_ID
@@ -157,7 +157,7 @@ require_once '../includes/header.php';
                             <?php foreach ($participants as $i => $p): ?>
                                 <tr>
                                     <td><?php echo $i + 1; ?></td>
-                                    <td><?php echo htmlspecialchars($p['Full_Name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                    <td><?php echo htmlspecialchars($p['Name'], ENT_QUOTES, 'UTF-8'); ?></td>
                                     <td><?php echo htmlspecialchars($p['Email'], ENT_QUOTES, 'UTF-8'); ?></td>
                                     <td><?php echo htmlspecialchars($p['Mobile'] ?? 'N/A', ENT_QUOTES, 'UTF-8'); ?></td>
                                     <td><?php echo htmlspecialchars($p['College_Organization'] ?? 'N/A', ENT_QUOTES, 'UTF-8'); ?></td>

@@ -29,9 +29,9 @@ $totalEvents = $stmtEvents->fetchColumn();
 $stmtRegs = $pdo->query("SELECT COUNT(*) FROM registrations");
 $totalRegistrations = $stmtRegs->fetchColumn();
 
-// ── Stat 4: Active (Confirmed) Registrations ───────────────────
-$stmtActive = $pdo->query("SELECT COUNT(*) FROM registrations WHERE Status = 'Confirmed'");
-$activeRegistrations = $stmtActive->fetchColumn();
+// ── Stat 4: Completed Payments ───────────────────
+$stmtPayments = $pdo->query("SELECT COUNT(*) FROM payments WHERE status = 'Paid'");
+$completedPayments = $stmtPayments->fetchColumn();
 
 // ── Chart 1: Registration Status Breakdown ───────────────────
 $stmtRegStatus = $pdo->query("SELECT Status, COUNT(*) AS count FROM registrations GROUP BY Status");
@@ -137,54 +137,62 @@ require_once '../includes/header.php';
 <div class="row g-4 mb-4">
     <!-- Total Users -->
     <div class="col-xl-3 col-sm-6" data-aos="fade-up" data-aos-delay="0">
-        <div class="admin-stat-card">
+        <a href="manage_users.php" class="text-decoration-none" title="Manage Users">
+        <div class="admin-stat-card" style="cursor:pointer;">
             <div class="admin-stat-icon-wrapper">
                 <i class="bi bi-people-fill"></i>
             </div>
             <div>
                 <div class="admin-stat-value"><?php echo (int) $totalUsers; ?></div>
-                <div class="admin-stat-label">Registered Users</div>
+                <div class="admin-stat-label">Registered Users <i class="bi bi-arrow-right-circle ms-1 small"></i></div>
             </div>
         </div>
+        </a>
     </div>
 
     <!-- Total Events -->
     <div class="col-xl-3 col-sm-6" data-aos="fade-up" data-aos-delay="100">
-        <div class="admin-stat-card">
+        <a href="manage_requests.php" class="text-decoration-none" title="Manage Events">
+        <div class="admin-stat-card" style="cursor:pointer;">
             <div class="admin-stat-icon-wrapper">
                 <i class="bi bi-calendar-event-fill"></i>
             </div>
             <div>
                 <div class="admin-stat-value"><?php echo (int) $totalEvents; ?></div>
-                <div class="admin-stat-label">Total Events</div>
+                <div class="admin-stat-label">Total Events <i class="bi bi-arrow-right-circle ms-1 small"></i></div>
             </div>
         </div>
+        </a>
     </div>
 
     <!-- Total Registrations -->
     <div class="col-xl-3 col-sm-6" data-aos="fade-up" data-aos-delay="200">
-        <div class="admin-stat-card">
+        <a href="reports.php" class="text-decoration-none" title="View Reports">
+        <div class="admin-stat-card" style="cursor:pointer;">
             <div class="admin-stat-icon-wrapper">
                 <i class="bi bi-ticket-detailed-fill"></i>
             </div>
             <div>
                 <div class="admin-stat-value"><?php echo (int) $totalRegistrations; ?></div>
-                <div class="admin-stat-label">Registrations</div>
+                <div class="admin-stat-label">Registrations <i class="bi bi-arrow-right-circle ms-1 small"></i></div>
             </div>
         </div>
+        </a>
     </div>
 
-    <!-- Active Registrations -->
+    <!-- Active Registrations / Payments -->
     <div class="col-xl-3 col-sm-6" data-aos="fade-up" data-aos-delay="300">
-        <div class="admin-stat-card">
+        <a href="view_payments.php" class="text-decoration-none" title="View Payments">
+        <div class="admin-stat-card" style="cursor:pointer;">
             <div class="admin-stat-icon-wrapper">
-                <i class="bi bi-patch-check-fill"></i>
+                <i class="bi bi-wallet2"></i>
             </div>
             <div>
-                <div class="admin-stat-value"><?php echo (int) $activeRegistrations; ?></div>
-                <div class="admin-stat-label">Confirmed Seats</div>
+                <div class="admin-stat-value"><?php echo (int) $completedPayments; ?></div>
+                <div class="admin-stat-label">Total Payments <i class="bi bi-arrow-right-circle ms-1 small"></i></div>
             </div>
         </div>
+        </a>
     </div>
 </div>
 

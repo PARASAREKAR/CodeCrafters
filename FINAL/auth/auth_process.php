@@ -300,13 +300,15 @@ if ($action === 'register') {
             $mail->send();
 
         }catch (Exception $e) {
-             die("Registration Mail Error: " . $mail->ErrorInfo);
+             error_log("Registration Mail Error: " . $mail->ErrorInfo);
+             flashRedirect('Registration successful, but confirmation email failed to send.', 'warning', 'login.php');
         }
 
         flashRedirect('Registration successful! You can now log in.', 'success', 'login.php');
 
     } catch (PDOException $e) {
-        die("Registration Query Error: " . $e->getMessage());
+        error_log("Registration Query Error: " . $e->getMessage());
+        flashRedirect("Database error during registration.", 'danger', 'register.php');
     }
 }
 // ============================================================
@@ -392,7 +394,8 @@ try {
     
 
 } catch (Exception $e) {
-    die("Mailer Error: " . $mail->ErrorInfo);
+    error_log("Login Mailer Error: " . $mail->ErrorInfo);
+    flashRedirect("Failed to send OTP email. Please try again later.", 'danger', 'login.php');
 }
 
 

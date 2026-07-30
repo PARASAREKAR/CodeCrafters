@@ -29,12 +29,17 @@ $stmt_regs = $pdo->prepare(
     "SELECT r.Registration_ID,
             r.Registration_Date,
             r.Status,
+            r.organizer_approved,
             e.Event_Name,
             e.Event_Date,
             e.Event_Time,
-            e.Venue
+            e.Venue,
+            e.Event_Fee,
+            p.status AS pay_status,
+            p.qr_token
        FROM registrations r
        JOIN events e ON r.Event_ID = e.Event_ID
+       LEFT JOIN payments p ON p.registration_id = r.Registration_ID
       WHERE r.User_ID = ?
       ORDER BY r.Registration_Date DESC"
 );
@@ -89,6 +94,7 @@ require_once '../includes/header.php';
                         <th>Event Time</th>
                         <th>Registration Date</th>
                         <th>Status</th>
+                        <th>Payment</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -123,11 +129,31 @@ require_once '../includes/header.php';
                         <td><?php echo htmlspecialchars($reg['Venue'], ENT_QUOTES, 'UTF-8'); ?></td>
                         <td><?php echo htmlspecialchars($reg['Event_Date'], ENT_QUOTES, 'UTF-8'); ?></td>
                         <td><?php echo htmlspecialchars($reg['Event_Time'] ?? 'TBD', ENT_QUOTES, 'UTF-8'); ?></td>
-                        <td><?php echo htmlspecialchars($reg['Registration_Date'], ENT_QUOTES, 'UTF-8'); ?></td>
+                        <td><?php echo htmlspecialchars(date('d M Y', strtotime($reg['Registration_Date'])), ENT_QUOTES, 'UTF-8'); ?></td>
                         <td>
                             <span class="badge <?php echo $badge_class; ?>">
                                 <?php echo htmlspecialchars($status, ENT_QUOTES, 'UTF-8'); ?>
                             </span>
+                        </td>
+                        <td>
+                            <?php if ($reg['Event_Fee'] > 0): ?>
+                                <?php if ($reg['Status'] === 'Cancelled'): ?>
+                                    <span class="text-muted small">—</span>
+                                <?php elseif (!$reg['organizer_approved']): ?>
+                                    <span class="badge bg-secondary">⏳ Pending Org</span>
+                                <?php elseif ($reg['pay_status'] === 'Paid'): ?>
+                                    <span class="badge bg-success">✅ Paid</span>
+                                <?php elseif ($reg['pay_status'] === 'Pending'): ?>
+                                    <a href="view_qr.php?token=<?php echo htmlspecialchars($reg['qr_token'], ENT_QUOTES, 'UTF-8'); ?>"
+                                       class="btn btn-sm btn-outline-warning" target="_blank">
+                                        <i class="bi bi-qr-code-scan"></i> Pay ₹<?php echo number_format($reg['Event_Fee'], 0); ?>
+                                    </a>
+                                <?php else: ?>
+                                    <span class="badge bg-danger">Error</span>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <span class="badge bg-success-light text-success border-0">Free</span>
+                            <?php endif; ?>
                         </td>
                         <td>
                             <?php if ($can_cancel): ?>
@@ -135,7 +161,7 @@ require_once '../includes/header.php';
                                    class="btn btn-sm btn-outline-danger confirm-action"
                                    data-confirm-message="Are you sure you want to cancel this registration?"
                                    title="Cancel Registration">
-                                    <i class="bi bi-x-circle me-1"></i>Cancel
+                                    <i class="bi bi-x-circle"></i>
                                 </a>
                             <?php else: ?>
                                 <span class="text-muted small">—</span>
@@ -161,18 +187,18 @@ require_once '../includes/header.php';
             <div class="modal-content glass-card border-0 text-center p-4" style="border-radius: 24px; background: var(--bg-card);">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <span style="font-size: 3.5rem;">🎉</span>
+                        <span style="font-size: 3.5rem;">⏳</span>
                     </div>
-                    <h3 class="fw-bold text-accent mb-2" id="regSuccessModalLabel">Registration Successful!</h3>
+                    <h3 class="fw-bold text-accent mb-2" id="regSuccessModalLabel">Request Sent!</h3>
                     <p class="text-muted mb-3" style="font-size: 1.05rem;">
-                        You have successfully registered for <br><strong class="text-primary"><?php echo htmlspecialchars($modalData['event_name'] ?? 'the event', ENT_QUOTES, 'UTF-8'); ?></strong>.
+                        You have successfully requested to join <br><strong class="text-primary"><?php echo htmlspecialchars($modalData['event_name'] ?? 'the event', ENT_QUOTES, 'UTF-8'); ?></strong>.
                     </p>
                     <div class="p-3 mb-4 text-start rounded-3" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border);">
-                        <small class="text-muted d-block"><i class="bi bi-envelope-check-fill text-accent me-1"></i> <strong>Email Receipt Dispatched:</strong></small>
-                        <small class="text-secondary">A confirmation email has been sent to <strong><?php echo htmlspecialchars($modalData['user_email'] ?? '', ENT_QUOTES, 'UTF-8'); ?></strong>.</small>
+                        <small class="text-muted d-block"><i class="bi bi-clock-history text-warning me-1"></i> <strong>Pending Organizer Approval:</strong></small>
+                        <small class="text-secondary">Your request is currently under review. You will receive a confirmation email at <strong><?php echo htmlspecialchars($modalData['user_email'] ?? '', ENT_QUOTES, 'UTF-8'); ?></strong> in less than 24 hours once the organizer accepts it.</small>
                     </div>
                     <button type="button" class="btn btn-accent btn-lg w-100" data-bs-dismiss="modal">
-                        <i class="bi bi-check-circle me-1"></i>Got It
+                        <i class="bi bi-check-circle me-1"></i>Understood
                     </button>
                 </div>
             </div>

@@ -51,6 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $organizer   = trim(htmlspecialchars($_POST['Organizer']    ?? '', ENT_QUOTES, 'UTF-8'));
     $capacity    = (int) ($_POST['Capacity'] ?? 0);
     $category    = trim(htmlspecialchars($_POST['Event_Category'] ?? 'General', ENT_QUOTES, 'UTF-8'));
+    $eventFee    = max(0, (float) ($_POST['Event_Fee'] ?? 0));
 
     // Validate category is in allowed list
     if (!in_array($category, $event_categories, true)) {
@@ -107,10 +108,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // ── INSERT event ───────────────────────────────────────────
     $stmt = $pdo->prepare(
-        "INSERT INTO events (Event_Name, Description, Venue, Event_Date, Event_Time, Organizer, Capacity, Event_Category, Image_Path, created_by, Status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')"
+        "INSERT INTO events (Event_Name, Description, Venue, Event_Date, Event_Time, Organizer, Capacity, Event_Fee, Event_Category, Image_Path, created_by, Status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')"
     );
-    $stmt->execute([$eventName, $description, $venue, $eventDate, $eventTime, $organizer, $capacity, $category, $imagePath, $user_id]);
+    $stmt->execute([$eventName, $description, $venue, $eventDate, $eventTime, $organizer, $capacity, $eventFee, $category, $imagePath, $user_id]);
 
     setFlashMessage('Event created successfully! It is now pending admin approval.', 'success');
     header('Location: organizer_dashboard.php');
@@ -241,6 +242,21 @@ require_once '../includes/header.php';
                                        name="Capacity" required min="1" placeholder="Max participants"
                                        value="<?php echo htmlspecialchars($_POST['Capacity'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
                             </div>
+                        </div>
+
+                        <!-- Event Fee -->
+                        <div class="mb-3">
+                            <label for="Event_Fee" class="form-label fw-semibold">
+                                <i class="bi bi-currency-rupee me-1"></i>Registration Fee (₹)
+                                <small class="text-muted fw-normal ms-1">(Enter 0 for free event)</small>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-currency-rupee"></i></span>
+                                <input type="number" class="form-control form-control-custom" id="Event_Fee"
+                                       name="Event_Fee" min="0" step="0.01" placeholder="0.00"
+                                       value="<?php echo htmlspecialchars($_POST['Event_Fee'] ?? '0', ENT_QUOTES, 'UTF-8'); ?>">
+                            </div>
+                            <div class="form-text text-muted">This fee will be shown to participants and used for payment QR generation.</div>
                         </div>
 
                         <!-- Submit -->

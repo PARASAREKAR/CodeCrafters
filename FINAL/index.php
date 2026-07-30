@@ -114,8 +114,8 @@ $total_upcoming = (int) $stmt_total->fetchColumn();
     <nav class="navbar navbar-expand-lg navbar-custom" data-aos="fade-down" data-aos-delay="100">
         <div class="container">
             <!-- Brand -->
-            <a class="navbar-brand fw-bold" href="index.php">
-                <span style="color: var(--accent);">🎯</span> EventHub
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="index.php">
+                <img src="assets/images/logo.png" alt="EventHub Logo" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid var(--accent);"> EventHub
             </a>
 
             <!-- Mobile Toggle -->
@@ -298,7 +298,7 @@ $total_upcoming = (int) $stmt_total->fetchColumn();
         <div class="container">
             <div class="row g-4 justify-content-between">
                 <div class="col-lg-4 col-md-6">
-                    <span class="footer-brand" style="color: var(--accent);">🎯 EventHub</span>
+                    <span class="footer-brand" style="color: var(--accent);"><img src="assets/images/logo.png" alt="EventHub Logo" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid var(--accent);"> EventHub</span>
                     <p class="footer-desc">
                         Discover and register for world-class tech, business, and creative events. Elevate your potential today.
                     </p>
