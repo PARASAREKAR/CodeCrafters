@@ -61,7 +61,7 @@
             <div class="row g-4 justify-content-between">
                 <div class="col-lg-4 col-md-6">
                     <span class="footer-brand d-flex align-items-center gap-2" style="color: var(--accent);">
-                        <img src="<?php echo $footer_base; ?>assets/images/logo.png" alt="EventHub Logo" style="height: 28px; width: auto; filter: grayscale(100%) brightness(200%); opacity: 0.8;"> EventHub
+                        <img src="<?php echo $footer_base; ?>assets/images/logo.png" alt="EventHub Logo" class="rounded-circle shadow-sm" style="width: 38px; height: 38px; object-fit: cover; border: 2px solid var(--accent);"> EventHub
                     </span>
                     <p class="footer-desc mt-3">
                         Discover and register for world-class tech, business, and creative events. Elevate your potential today.

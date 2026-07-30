@@ -32,7 +32,7 @@ if (!$event) {
 
 // ── Fetch participants ─────────────────────────────────────────
 $stmtParts = $pdo->prepare(
-    "SELECT u.Full_Name, u.Email, u.Mobile, u.College_Organization,
+    "SELECT u.Name, u.Email, u.Mobile, r.College_Organization,
             r.Registration_Date, r.Status
      FROM registrations r
      JOIN users u ON r.User_ID = u.User_ID
@@ -65,7 +65,7 @@ fputcsv($output, ['Name', 'Email', 'Mobile', 'College/Organization', 'Registrati
 // Data rows
 foreach ($participants as $p) {
     fputcsv($output, [
-        $p['Full_Name'],
+        $p['Name'],
         $p['Email'],
         $p['Mobile']               ?? 'N/A',
         $p['College_Organization'] ?? 'N/A',

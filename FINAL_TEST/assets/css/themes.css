@@ -8,6 +8,7 @@
 /* ---- MIDNIGHT DARK — Default dark theme with electric accents ---- */
 :root,
 [data-theme='midnight-dark'] {
+  color-scheme: dark;
   --bg-primary: #05050a;
   --bg-secondary: #0d0d14;
   --bg-card: #12121a;
@@ -78,6 +79,7 @@
 
 /* ---- FOREST GREEN — Dark, earthy & organic ---- */
 [data-theme='forest-green'] {
+  color-scheme: dark;
   --bg-primary: #0a1410;
   --bg-secondary: #132a1f;
   --bg-card: #1a3328;

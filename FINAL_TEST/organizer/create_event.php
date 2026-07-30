@@ -129,11 +129,11 @@ require_once '../includes/header.php';
     <div class="row justify-content-center">
         <div class="col-lg-8">
 
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold mb-0">
+            <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+                <h2 class="fw-bold mb-0 fs-3">
                     <i class="bi bi-plus-circle me-2"></i>Create New Event
                 </h2>
-                <a href="organizer_dashboard.php" class="btn btn-outline-secondary">
+                <a href="organizer_dashboard.php" class="btn btn-sm btn-outline-secondary align-self-start align-self-sm-auto">
                     <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
                 </a>
             </div>
@@ -260,11 +260,11 @@ require_once '../includes/header.php';
                         </div>
 
                         <!-- Submit -->
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                            <a href="organizer_dashboard.php" class="btn btn-outline-secondary me-md-2">
+                        <div class="d-flex flex-column flex-sm-row justify-content-sm-end gap-2 mt-4">
+                            <a href="organizer_dashboard.php" class="btn btn-outline-secondary order-2 order-sm-1">
                                 <i class="bi bi-x-circle me-1"></i>Cancel
                             </a>
-                            <button type="submit" class="btn btn-accent">
+                            <button type="submit" class="btn btn-accent px-4 order-1 order-sm-2">
                                 <i class="bi bi-check-circle me-1"></i>Create Event
                             </button>
                         </div>

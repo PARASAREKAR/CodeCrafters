@@ -1,12 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
 /* ============================================================
    style.css — Master Stylesheet for Online Event Registration
    ------------------------------------------------------------
    All colors reference CSS custom properties from themes.css.
    No hardcoded colors — every visual property is themeable.
    ============================================================ */
-
-/* ---- Import Google Font ---- */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 /* ==========================================================
    1. GLOBAL RESET & BASE
@@ -99,45 +98,74 @@ a:hover {
 
 .navbar-custom {
   background: var(--glass-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
   border: 1px solid var(--glass-border);
-  padding: 0.85rem 1.5rem;
+  padding: 0.85rem 2rem;
   position: sticky;
   top: 15px;
   z-index: 1040;
-  border-radius: 50px;
+  border-radius: 100px;
   margin: 0 auto;
-  max-width: 95%;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  max-width: 92%;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+.navbar-custom:hover {
+  box-shadow: 0 15px 35px var(--accent-light);
+  border-color: var(--accent);
 }
 
 .navbar-custom .navbar-brand {
-  font-weight: 700;
-  font-size: 1.35rem;
+  font-weight: 800;
+  font-size: 1.45rem;
   background: var(--accent-gradient);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  transition: transform 0.3s ease;
+}
+.navbar-custom .navbar-brand:hover {
+  transform: scale(1.05);
 }
 
 .navbar-custom .nav-link {
-  color: var(--text-secondary);
-  font-weight: 500;
-  font-size: 0.92rem;
-  padding: 0.5rem 1rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.6rem !important;
+  margin: 0 0.1rem;
   border-radius: 8px;
-  transition: color 0.2s ease, background-color 0.2s ease;
+  position: relative;
+  white-space: nowrap;
+  transition: color 0.3s ease;
 }
-.navbar-custom .nav-link:hover,
-.navbar-custom .nav-link:focus {
-  color: var(--accent);
-  background-color: var(--accent-light);
+
+/* Premium Animated Underline for Links */
+.navbar-custom .nav-link:not(.btn)::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-gradient);
+  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border-radius: 2px;
 }
-.navbar-custom .nav-link.active {
+
+.navbar-custom .nav-link:not(.btn):hover,
+.navbar-custom .nav-link:not(.btn).active {
   color: var(--accent);
-  background-color: var(--accent-light);
+  background-color: transparent;
+}
+
+.navbar-custom .nav-link:not(.btn):hover::after,
+.navbar-custom .nav-link:not(.btn).active::after {
+  width: 70%;
 }
 
 .navbar-custom .navbar-toggler {
@@ -374,6 +402,8 @@ a:hover {
   background-color: var(--input-bg);
   color: var(--text-primary);
 }
+
+/* Let OS handle native dropdown option styling, color-scheme property handles dark mode */
 
 /* Labels */
 .form-label-custom {
@@ -1217,6 +1247,101 @@ a:hover {
   .stat-card {
     margin-bottom: 1rem;
   }
+  .navbar-custom {
+    padding: 0.75rem 1.25rem !important;
+    border-radius: 0 !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    top: 0 !important;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+  }
+  .navbar-custom .navbar-toggler {
+    order: 1;
+  }
+  .navbar-custom .navbar-brand {
+    order: 2;
+    margin-right: 0 !important;
+  }
+  .navbar-custom .navbar-collapse {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 320px;
+    max-width: 85vw;
+    height: 100vh !important;
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border-right: 1px solid var(--glass-border);
+    padding: 2rem 1.5rem;
+    z-index: 1060;
+    display: flex !important;
+    flex-direction: column;
+    visibility: hidden;
+    transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0.3s;
+    overflow-y: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  
+  .navbar-custom .navbar-collapse.show {
+    left: 0;
+    visibility: visible;
+    box-shadow: 20px 0 50px rgba(0,0,0,0.3), 0 0 0 10000px rgba(0,0,0,0.5);
+    transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), visibility 0s;
+  }
+
+  .navbar-custom .navbar-collapse.collapsing {
+    position: fixed;
+    top: 0;
+    left: -320px;
+    width: 320px;
+    max-width: 85vw;
+    height: 100vh !important;
+    background: var(--glass-bg);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border-right: 1px solid var(--glass-border);
+    padding: 2rem 1.5rem;
+    z-index: 1060;
+    display: flex !important;
+    flex-direction: column;
+    visibility: visible;
+    transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  /* Premium Mobile Links */
+  .navbar-custom .navbar-collapse .navbar-nav {
+    flex-direction: column;
+    width: 100%;
+    margin-top: 1rem;
+    align-items: flex-start !important;
+  }
+
+  .navbar-custom .navbar-collapse .nav-link {
+    width: 100%;
+    font-size: 1.1rem;
+    padding: 0.8rem 1rem !important;
+    margin: 0.3rem 0;
+    border-radius: 12px;
+    background: rgba(128, 128, 128, 0.05);
+    transition: all 0.3s ease;
+  }
+
+  /* Remove desktop underline in mobile */
+  .navbar-custom .navbar-collapse .nav-link::after {
+    display: none !important;
+  }
+
+  .navbar-custom .navbar-collapse .nav-link:hover,
+  .navbar-custom .navbar-collapse .nav-link.active {
+    background: var(--accent-light);
+    color: var(--accent);
+    transform: translateX(8px);
+  }
 }
 
 @media (max-width: 767.98px) {
@@ -1295,23 +1420,94 @@ a:hover {
    ========================================================== */
 
 @media print {
+  /* Set standard page margins */
+  @page {
+    size: auto;
+    margin: 15mm;
+  }
+
+  /* Hide UI Elements */
   .navbar-custom,
   .theme-switcher,
   .footer-custom,
+  .modern-footer,
+  footer,
   .btn-accent,
   .btn-outline-accent,
-  .search-wrapper {
+  .search-wrapper,
+  .nav-tabs,
+  .btn,
+  .sidebar,
+  .page-header {
     display: none !important;
   }
-  body {
+  
+  /* Reset background and text color */
+  body, *, ::before, ::after {
     background: #fff !important;
     color: #000 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
   }
+  
+  /* Force container to use full printable area */
+  .container, .container-fluid, main {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Flatten cards and containers for multi-page printing */
   .card-custom,
   .glass-card,
-  .table-responsive-custom {
+  .table-responsive,
+  .table-responsive-custom,
+  .tab-content,
+  .tab-pane,
+  .card,
+  .card-body {
     box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+    display: block !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Explicitly hide inactive tabs */
+  .tab-pane:not(.active) {
+    display: none !important;
+  }
+
+  /* Ensure tables stretch properly without breaking */
+  .table-custom, .table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: auto !important;
+  }
+  
+  .table-custom thead th,
+  .table-custom tbody td,
+  .table thead th,
+  .table tbody td {
+    color: #000 !important;
     border: 1px solid #ddd !important;
+    padding: 8px !important;
+    word-wrap: break-word !important;
+  }
+  
+  /* Remove glowing borders on print */
+  .card-custom::before,
+  .glass-card::before,
+  .card-custom::after,
+  .glass-card::after {
+    display: none !important;
   }
 }
 
@@ -1519,3 +1715,86 @@ a:hover {
   transform: scale(1.1);
 }
 
+
+.modern-footer {
+  background: var(--bg-secondary);
+  padding: 4rem 0 2rem;
+  border-top: 1px solid var(--border);
+  margin-top: 5rem;
+}
+
+.footer-brand {
+  font-weight: 800;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  display: inline-block;
+}
+
+.footer-desc {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  max-width: 300px;
+}
+
+.footer-title {
+  color: var(--text-primary);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.75rem;
+}
+
+.footer-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--accent);
+}
+
+.footer-socials {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer-socials a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+.footer-socials a:hover {
+  background: var(--accent);
+  color: #fff;
+  transform: translateY(-3px);
+}
+
+.footer-bottom {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}

@@ -129,13 +129,13 @@ $total_upcoming = (int) $stmt_total->fetchColumn();
             <div class="collapse navbar-collapse" id="navbarLanding">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="browse_events.php">
-                            <i class="bi bi-calendar-event me-1"></i>Browse Events
+                        <a class="nav-link" href="about.php">
+                            <i class="bi bi-info-circle me-1"></i>About Us
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="about.php">
-                            <i class="bi bi-info-circle me-1"></i>About Us
+                        <a class="nav-link" href="browse_events.php">
+                            <i class="bi bi-calendar-event me-1"></i>Browse Events
                         </a>
                     </li>
                     <li class="nav-item">

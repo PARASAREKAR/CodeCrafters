@@ -755,3 +755,17 @@ window.showSupportUnderProcess = function (e) {
   }, 4500);
 };
 
+// Close offcanvas mobile navbar when clicking outside
+document.addEventListener('click', function(e) {
+  var navbarCollapse = document.querySelector('.navbar-collapse.show');
+  var navbarToggler = document.querySelector('.navbar-toggler');
+  
+  // If the mobile navbar is open
+  if (navbarCollapse && navbarToggler) {
+    // Check if click was outside the menu and not on the hamburger icon
+    if (!navbarCollapse.contains(e.target) && !navbarToggler.contains(e.target)) {
+      // Trigger Bootstrap's collapse by clicking the toggler
+      navbarToggler.click();
+    }
+  }
+});

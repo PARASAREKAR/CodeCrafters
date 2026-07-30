@@ -21,7 +21,12 @@ $sender_email = '';
 $sender_subject = '';
 $errors = [];
 
+$csrfToken = generateCsrfToken();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
+    if (!validateCsrfToken($_POST['csrf_token'] ?? '')) {
+        $errors[] = "Invalid security token. Please try again.";
+    } else {
     $sender_name    = trim(htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8'));
     $sender_email   = trim(filter_var($_POST['email'] ?? '', FILTER_VALIDATE_EMAIL));
     $sender_subject = trim(htmlspecialchars($_POST['subject'] ?? '', ENT_QUOTES, 'UTF-8'));
@@ -143,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
             $errors[] = "Failed to submit your message: " . $e->getMessage();
         }
     }
+    } // end else for CSRF
 }
 ?>
 <!DOCTYPE html>
@@ -315,6 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_message'])) {
                         <!-- Contact Form -->
                         <h3 class="fw-bold text-center mb-4">Send Us a Message</h3>
                         <form action="contact.php" method="POST">
+                            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="name" class="form-label text-muted">Your Name</label>

@@ -136,14 +136,9 @@ require_once '../includes/header.php';
             <div class="card card-custom glass-card">
                 <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Event-wise Registration Summary</h5>
-                    <div class="d-flex gap-2">
-                        <a href="export_reports.php?type=event_wise" class="btn btn-sm btn-outline-success">
-                            <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
-                        </a>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
-                            <i class="bi bi-printer me-1"></i>Print
-                        </button>
-                    </div>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="printTab('tab1')">
+                        <i class="bi bi-printer me-1"></i>Print
+                    </button>
                 </div>
                 <div class="card-body">
                     <?php if (empty($eventWise)): ?>
@@ -191,14 +186,9 @@ require_once '../includes/header.php';
             <div class="card card-custom glass-card">
                 <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Participant Details</h5>
-                    <div class="d-flex gap-2">
-                        <a href="export_reports.php?type=participant_details" class="btn btn-sm btn-outline-success">
-                            <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
-                        </a>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
-                            <i class="bi bi-printer me-1"></i>Print
-                        </button>
-                    </div>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="printTab('tab2')">
+                        <i class="bi bi-printer me-1"></i>Print
+                    </button>
                 </div>
                 <div class="card-body">
                     <?php if (empty($participantDetails)): ?>
@@ -253,14 +243,9 @@ require_once '../includes/header.php';
             <div class="card card-custom glass-card">
                 <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Attendance Records</h5>
-                    <div class="d-flex gap-2">
-                        <a href="export_reports.php?type=attendance" class="btn btn-sm btn-outline-success">
-                            <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
-                        </a>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
-                            <i class="bi bi-printer me-1"></i>Print
-                        </button>
-                    </div>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="printTab('tab3')">
+                        <i class="bi bi-printer me-1"></i>Print
+                    </button>
                 </div>
                 <div class="card-body">
                     <?php if (empty($attendanceRecords)): ?>
@@ -314,14 +299,9 @@ require_once '../includes/header.php';
             <div class="card card-custom glass-card">
                 <div class="card-header bg-transparent d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Cancelled Registrations</h5>
-                    <div class="d-flex gap-2">
-                        <a href="export_reports.php?type=cancelled_registrations" class="btn btn-sm btn-outline-success">
-                            <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
-                        </a>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="window.print()">
-                            <i class="bi bi-printer me-1"></i>Print
-                        </button>
-                    </div>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="printTab('tab4')">
+                        <i class="bi bi-printer me-1"></i>Print
+                    </button>
                 </div>
                 <div class="card-body">
                     <?php if (empty($cancelledRegs)): ?>
@@ -361,21 +341,27 @@ require_once '../includes/header.php';
     </div><!-- /tab-content -->
 </div>
 
-<style>
-    /* Print-friendly styles */
-    @media print {
-        .navbar, .footer-custom, .nav-tabs, .btn, .search-wrapper {
-            display: none !important;
-        }
-        /* Only show the active tab when printing */
-        .tab-pane:not(.active) {
-            display: none !important;
-        }
-        .card {
-            border: 1px solid #ddd !important;
-            box-shadow: none !important;
-        }
-    }
-</style>
+<!-- Print helper: clones the target tab's content into a new window -->
+<script>
+function printTab(tabId) {
+    const content  = document.getElementById(tabId);
+    const printWin = window.open('', '_blank', 'width=900,height=700');
+    printWin.document.write(`
+        <html>
+        <head>
+            <title>Print Report</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>body{padding:20px;} @media print{.no-print{display:none;}}</style>
+        </head>
+        <body>
+            <h3 class="mb-3">Organizer Report</h3>
+            ${content.innerHTML}
+            <script>window.print(); window.close();<\/script>
+        </body>
+        </html>
+    `);
+    printWin.document.close();
+}
+</script>
 
 <?php require_once '../includes/footer.php'; ?>

@@ -36,6 +36,11 @@ $action = $_GET['action'] ?? '';
 $reg_id = isset($_GET['reg_id']) ? (int) $_GET['reg_id'] : 0;
 
 if ($action && $reg_id > 0) {
+    if (!validateCsrfToken($_GET['csrf_token'] ?? '')) {
+        setFlashMessage('Invalid CSRF token.', 'danger');
+        header("Location: manage_participants.php?event_id=$event_id");
+        exit;
+    }
 
     // Ensure the registration belongs to this event
     $stmtCheck = $pdo->prepare(
@@ -190,7 +195,7 @@ require_once '../includes/header.php';
                                             <span class="badge bg-success me-1">✅ Accepted</span>
                                         <?php endif; ?>
                                         <?php if ($p['Status'] !== 'Cancelled'): ?>
-                                            <a href="manage_participants.php?event_id=<?php echo (int) $event_id; ?>&action=remove&reg_id=<?php echo (int) $p['Registration_ID']; ?>"
+                                            <a href="manage_participants.php?event_id=<?php echo (int) $event_id; ?>&action=remove&reg_id=<?php echo (int) $p['Registration_ID']; ?>&csrf_token=<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>"
                                                class="btn btn-sm btn-outline-danger" title="Remove"
                                                onclick="return confirm('Cancel this registration?');">
                                                 <i class="bi bi-x-circle"></i> Remove

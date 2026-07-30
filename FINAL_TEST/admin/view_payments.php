@@ -63,8 +63,16 @@ require_once '../includes/header.php';
 </div>
 
 <div class="card glass-card" data-aos="fade-up">
-    <div class="card-header bg-transparent border-0 pt-4 px-4">
+    <div class="card-header bg-transparent border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
         <h5 class="fw-bold mb-0">📋 All Payment Records</h5>
+        <div class="d-flex gap-2">
+            <a href="export_reports.php?type=payments" class="btn btn-sm btn-outline-success">
+                <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
+            </a>
+            <button class="btn btn-sm btn-outline-secondary" onclick="window.print();">
+                🖨️ Print
+            </button>
+        </div>
     </div>
     <div class="card-body p-0">
         <?php if (empty($payments)): ?>
